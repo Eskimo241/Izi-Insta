@@ -136,6 +136,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
+        android:onClick="createAccount"
         android:text="Créer un compte"
         android:textColor="#673AB7"
         android:textSize="20dp"
