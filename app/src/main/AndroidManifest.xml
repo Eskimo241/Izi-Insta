@@ -21,7 +21,7 @@
             android:name=".Create_Account"
             android:exported="false" />
         <activity
-            android:name=".home"
+            android:name=".Home"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
