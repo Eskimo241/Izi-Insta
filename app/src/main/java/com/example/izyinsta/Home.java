@@ -17,7 +17,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-public class home extends AppCompatActivity {
+public class Home extends AppCompatActivity {
 
     private EditText username;
     private EditText password;
@@ -62,7 +62,7 @@ public class home extends AppCompatActivity {
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.isSuccessful()) {
                     final String myResponse = response.body().string();
-                    home.this.runOnUiThread(new Runnable() {
+                    Home.this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             //dbgText.setText(myResponse);

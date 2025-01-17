@@ -18,10 +18,13 @@
         android:theme="@style/Theme.IzyInsta"
         tools:targetApi="31">
         <activity
+            android:name=".Tendency"
+            android:exported="false" />
+        <activity
             android:name=".Create_Account"
             android:exported="false" />
         <activity
-            android:name=".home"
+            android:name=".Home"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
