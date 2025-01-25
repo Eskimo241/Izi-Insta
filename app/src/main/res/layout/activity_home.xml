@@ -147,4 +147,13 @@
         app:layout_constraintTop_toBottomOf="@+id/createAccountButton"
         app:layout_constraintVertical_bias="0.0" />
 
+    <TextView
+        android:id="@+id/dbgText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_editor_absoluteY="686dp" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

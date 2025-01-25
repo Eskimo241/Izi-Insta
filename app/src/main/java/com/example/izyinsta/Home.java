@@ -25,7 +25,7 @@ public class Home extends AppCompatActivity {
     private TextView dbgText;
 
     public String servUrl = "http://android.chocolatine-rt.fr:7217/androidServ/";
-
+    //public String servUrl = "http://10.192.16.90/androidServ/";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,7 +34,7 @@ public class Home extends AppCompatActivity {
         username = findViewById(R.id.textNameInput);
         password = findViewById(R.id.textMDPInput);
 
-       // dbgText = findViewById(R.id.dbgText);
+        dbgText = findViewById(R.id.dbgText);
     }
 
     public void register (View v) {
@@ -44,6 +44,7 @@ public class Home extends AppCompatActivity {
         RequestBody body = new FormBody.Builder()
                 .add("username", username.getText().toString())
                 .add("password", password.getText().toString())
+                .add("action", "login")
                 .build();
 
         Request request = new Request.Builder()
@@ -65,7 +66,8 @@ public class Home extends AppCompatActivity {
                     Home.this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            //dbgText.setText(myResponse);
+                            dbgText.setText(myResponse);
+                            Log.d("TAG", "Login Response: "+myResponse);
                         }
                     });
                 }
