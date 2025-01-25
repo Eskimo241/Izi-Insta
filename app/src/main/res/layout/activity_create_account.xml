@@ -125,6 +125,7 @@
         android:layout_width="266dp"
         android:layout_height="73dp"
         android:layout_marginBottom="52dp"
+        android:onClick="register"
         android:text="Créer un compte"
         android:textSize="20dp"
         app:layout_constraintBottom_toBottomOf="@+id/bgGradientImage"

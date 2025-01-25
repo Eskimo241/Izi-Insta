@@ -33,7 +33,7 @@ public class Create_Account extends AppCompatActivity {
 
         username = findViewById(R.id.textNameInput);
         password = findViewById(R.id.textMDPInput);
-
+        email = findViewById(R.id.textEmailInput);
         // dbgText = findViewById(R.id.dbgText);
     }
 
@@ -44,6 +44,8 @@ public class Create_Account extends AppCompatActivity {
         RequestBody body = new FormBody.Builder()
                 .add("username", username.getText().toString())
                 .add("password", password.getText().toString())
+                .add("email", email.getText().toString())
+                .add("action", "register")
                 .build();
 
         Request request = new Request.Builder()
@@ -66,11 +68,12 @@ public class Create_Account extends AppCompatActivity {
                         @Override
                         public void run() {
                             //dbgText.setText(myResponse);
+                            Log.d("DBG", "onResponse: "+myResponse);
                         }
                     });
                 }
                 else {
-                    Log.d("fetchPost", "onResponse: "+response.toString());
+                    Log.d("DBG", "onResponse: "+response.toString());
                 }
 
             }
