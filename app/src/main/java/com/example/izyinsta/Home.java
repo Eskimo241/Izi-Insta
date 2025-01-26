@@ -50,6 +50,12 @@ public class Home extends AppCompatActivity {
 
         //Checking if client has previously logged in using shared preferences
         SharedPreferences preferences = getSharedPreferences("com.example.izyinsta.PREFERENCE_FILE_KEY", Context.MODE_PRIVATE);
+
+        //Use for debugging only - Disable persistent connection
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.clear();
+        editor.apply();
+
         String savedUsername = preferences.getString("username", "");
         String savedPassword = preferences.getString("password", "");
 
@@ -106,7 +112,7 @@ public class Home extends AppCompatActivity {
                                 editor.apply();
 
                                 //Redirect to main activity
-                                Intent intent = new Intent(Home.this, devSend.class);
+                                Intent intent = new Intent(Home.this, Tendency.class);
                                 startActivity(intent);
                             }
                             else {

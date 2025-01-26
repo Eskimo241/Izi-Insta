@@ -18,6 +18,9 @@
         android:theme="@style/Theme.IzyInsta"
         tools:targetApi="31">
         <activity
+            android:name=".Profil"
+            android:exported="false" />
+        <activity
             android:name=".devSend"
             android:exported="false" />
         <activity

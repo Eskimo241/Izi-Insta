@@ -12,10 +12,10 @@
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0"
+        app:layout_constraintVertical_bias="0.0"
         app:srcCompat="@drawable/bg" />
 
     <TextView
@@ -34,59 +34,55 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
-        android:id="@+id/imageView4"
+        android:id="@+id/tendencyHomeIcon"
         android:layout_width="72dp"
         android:layout_height="73dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/imageView5"
-        app:layout_constraintHorizontal_bias="0.592"
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@drawable/icons8_home_96" />
 
     <ImageView
-        android:id="@+id/imageView5"
+        android:id="@+id/tendencySearchIcon"
         android:layout_width="67dp"
         android:layout_height="72dp"
-        android:layout_marginEnd="12dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/imageView6"
-        app:layout_constraintHorizontal_bias="0.978"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/tendencyProfilIcon"
+        app:layout_constraintHorizontal_bias="0.036"
+        app:layout_constraintStart_toEndOf="@+id/tendencyHomeIcon"
         app:srcCompat="@drawable/icons8_loupe_100_default" />
 
     <ImageView
-        android:id="@+id/imageView6"
+        android:id="@+id/tendencyAddIcon"
         android:layout_width="68dp"
         android:layout_height="75dp"
         app:layout_constraintBottom_toBottomOf="@+id/bgGradientImage"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/tendencyLikeIcon"
+        app:layout_constraintStart_toEndOf="@+id/tendencySearchIcon"
         app:srcCompat="@drawable/icons8_plus_100_default" />
 
     <ImageView
-        android:id="@+id/imageView7"
+        android:id="@+id/tendencyLikeIcon"
         android:layout_width="76dp"
         android:layout_height="75dp"
-        android:layout_marginStart="4dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.12"
-        app:layout_constraintStart_toEndOf="@+id/imageView6"
+        app:layout_constraintEnd_toStartOf="@+id/tendencyProfilIcon"
+        app:layout_constraintHorizontal_bias="0.95"
+        app:layout_constraintStart_toStartOf="@+id/tendencyHomeIcon"
         app:srcCompat="@drawable/icons8_heart_100_default" />
 
     <ImageView
-        android:id="@+id/imageView8"
+        android:id="@+id/tendencyProfilIcon"
         android:layout_width="70dp"
         android:layout_height="76dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/imageView7"
         app:srcCompat="@drawable/icons8_account_96_default" />
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/profilImgScroller"
         android:layout_width="420dp"
         android:layout_height="579dp"
-        app:layout_constraintBottom_toTopOf="@+id/imageView6"
+        app:layout_constraintBottom_toTopOf="@+id/tendencyAddIcon"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/titleTendency" />
