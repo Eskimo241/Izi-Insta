@@ -28,20 +28,18 @@ public class Profil extends AppCompatActivity {
             }
         });
 
-        Button buttonDeconnect = findViewById(R.id.buttonLogOff);
-        buttonDeconnect.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SharedPreferences preferences = getSharedPreferences("com.example.izyinsta.PREFERENCE_FILE_KEY", Context.MODE_PRIVATE);
+        Button buttonDisconnect = findViewById(R.id.buttonLogOff);
 
-                SharedPreferences.Editor editor = preferences.edit();
-                editor.clear();
-                editor.apply();
+    }
+    public void logout(View view) {
+        SharedPreferences preferences = getSharedPreferences("com.example.izyinsta.PREFERENCE_FILE_KEY", Context.MODE_PRIVATE);
 
-                Context context = getApplicationContext();
-                Intent intent = new Intent(context, Home.class);
-                context.startActivity(intent);
-            }
-        });
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.clear();
+        editor.apply();
+
+        Context context = getApplicationContext();
+        Intent intent = new Intent(context, Home.class);
+        startActivity(intent);
     }
 }

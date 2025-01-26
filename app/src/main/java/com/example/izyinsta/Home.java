@@ -52,9 +52,9 @@ public class Home extends AppCompatActivity {
         SharedPreferences preferences = getSharedPreferences("com.example.izyinsta.PREFERENCE_FILE_KEY", Context.MODE_PRIVATE);
 
         //Use for debugging only - Disable persistent connection
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.clear();
-        editor.apply();
+        //SharedPreferences.Editor editor = preferences.edit();
+        //editor.clear();
+        //editor.apply();
 
         String savedUsername = preferences.getString("username", "");
         String savedPassword = preferences.getString("password", "");
