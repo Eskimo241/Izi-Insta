@@ -18,6 +18,24 @@
         app:layout_constraintVertical_bias="0.0"
         app:srcCompat="@drawable/bg" />
 
+    <ImageView
+        android:id="@+id/menacingBG3"
+        android:layout_width="219dp"
+        android:layout_height="236dp"
+        android:rotation="5"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/titleTendency"
+        app:srcCompat="@drawable/menacing_3" />
+
+    <ImageView
+        android:id="@+id/menacingBG4"
+        android:layout_width="128dp"
+        android:layout_height="443dp"
+        android:rotation="-5"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/menacing2" />
+
     <TextView
         android:id="@+id/titleTendency"
         android:layout_width="812dp"
