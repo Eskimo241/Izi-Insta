@@ -1,13 +1,19 @@
 package com.example.izyinsta;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 
@@ -22,7 +28,7 @@ public class Create_Account extends AppCompatActivity {
     private EditText username;
     private EditText password;
     private EditText email;
-    private TextView dbgText;
+    private TextView statusText;
 
     public String servUrl = "http://android.chocolatine-rt.fr:7217/androidServ/";
 
@@ -34,12 +40,12 @@ public class Create_Account extends AppCompatActivity {
         username = findViewById(R.id.textNameInput);
         password = findViewById(R.id.textMDPInput);
         email = findViewById(R.id.textEmailInput);
-        // dbgText = findViewById(R.id.dbgText);
+        statusText = findViewById(R.id.statusText);
     }
 
     public void register (View v) {
         OkHttpClient client = new OkHttpClient();
-        String url = servUrl + "index.php";
+
 
         RequestBody body = new FormBody.Builder()
                 .add("username", username.getText().toString())
@@ -53,27 +59,46 @@ public class Create_Account extends AppCompatActivity {
                 .post(body)
                 .build();
 
-        Log.d("fetchPost", "fetchPost: "+request.toString());
+        Log.d("fetchPost", "fetchPost: "+request);
         client.newCall(request).enqueue(new okhttp3.Callback() {
             @Override
-            public void onFailure(okhttp3.Call call, IOException e) {
+            public void onFailure(@NonNull okhttp3.Call call, @NonNull IOException e) {
                 Log.d("fetchPost", "onFailure: "+e.getMessage());
             }
 
             @Override
-            public void onResponse(Call call, Response response) throws IOException {
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (response.isSuccessful()) {
+                    assert response.body() != null;
                     final String myResponse = response.body().string();
-                    Create_Account.this.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            //dbgText.setText(myResponse);
-                            Log.d("DBG", "onResponse: "+myResponse);
+                    Create_Account.this.runOnUiThread(() -> {
+                        try {
+                            JSONObject obj = new JSONObject(myResponse);
+                            if (obj.getString("success").equals("1")) {
+
+                                //If login is successful, we save the username and password in shared preferences
+                                SharedPreferences preferences = getSharedPreferences("com.example.izyinsta.PREFERENCE_FILE_KEY", Context.MODE_PRIVATE);
+                                SharedPreferences.Editor editor = preferences.edit();
+                                editor.putString("username", username.getText().toString());
+                                editor.putString("password", password.getText().toString());
+                                editor.apply();
+
+                                //Redirect to main activity
+                                Intent intent = new Intent(Create_Account.this, Tendency.class);
+                                startActivity(intent);
+                            }
+                            else {
+                                Log.d("DBG", "CreateAccountFailed");
+                                Log.d("DBG", "onResponse: "+response);
+                                statusText.setText("Création de compte échouée");
+                            }
+                        } catch (JSONException e) {
+                            throw new RuntimeException(e);
                         }
                     });
                 }
                 else {
-                    Log.d("DBG", "onResponse: "+response.toString());
+                    Log.d("DBG", "onResponse: "+ response);
                 }
 
             }
