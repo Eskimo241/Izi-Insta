@@ -17,6 +17,8 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import org.json.JSONObject;
+import org.json.JSONException;
 public class Home extends AppCompatActivity {
 
     private EditText username;
@@ -24,8 +26,8 @@ public class Home extends AppCompatActivity {
     private EditText email;
     private TextView dbgText;
 
-    public String servUrl = "http://android.chocolatine-rt.fr:7217/androidServ/";
-    //public String servUrl = "http://10.192.16.90/androidServ/";
+    //public String servUrl = "http://android.chocolatine-rt.fr:7217/androidServ/";
+    public String servUrl = "http://10.192.16.90/androidServ/";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,13 +68,28 @@ public class Home extends AppCompatActivity {
                     Home.this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            dbgText.setText(myResponse);
+                            try {
+                                JSONObject obj = new JSONObject(myResponse);
+                                if (obj.getString("success").equals("1")) {
+                                    Intent intent = new Intent(Home.this, devSend.class);
+                                    startActivity(intent);
+                                }
+                                else {
+                                    Log.d("DBG", "LoginFailed");
+                                    dbgText.setText("Incorrect username or password");
+                                }
+                            } catch (JSONException e) {
+                                throw new RuntimeException(e);
+                            }
+
+                            //dbgText.setText(myResponse);
                             Log.d("TAG", "Login Response: "+myResponse);
                         }
                     });
                 }
                 else {
                     Log.d("fetchPost", "onResponse: "+response.toString());
+                    dbgText.setText("Error connecting to the server");
                 }
 
             }
