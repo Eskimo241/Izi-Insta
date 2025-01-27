@@ -26,4 +26,8 @@ public class Tendency extends AppCompatActivity {
         });
 
     }
+    public void goSend(View v) {
+        Intent intent = new Intent(this, devSend.class);
+        startActivity(intent);
+    }
 }

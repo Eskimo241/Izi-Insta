@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Create_Account">
+    tools:context=".Tendency">
 
     <ImageView
         android:id="@+id/bgGradientImage"
@@ -73,10 +73,12 @@
         android:id="@+id/tendencyAddIcon"
         android:layout_width="68dp"
         android:layout_height="75dp"
+        android:onClick="goSend"
         app:layout_constraintBottom_toBottomOf="@+id/bgGradientImage"
         app:layout_constraintEnd_toStartOf="@+id/tendencyLikeIcon"
         app:layout_constraintStart_toEndOf="@+id/tendencySearchIcon"
         app:srcCompat="@drawable/icons8_plus_100_default" />
+
 
     <ImageView
         android:id="@+id/tendencyLikeIcon"
