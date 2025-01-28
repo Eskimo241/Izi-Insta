@@ -17,6 +17,8 @@ public class Profil extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profil);
 
+        //---Scroll from one page to another------------------------------
+
         ImageView myHomeIcon = findViewById(R.id.profilHomeIcon);
 
         final Profil profil = this;
@@ -41,5 +43,10 @@ public class Profil extends AppCompatActivity {
         Context context = getApplicationContext();
         Intent intent = new Intent(context, Home.class);
         startActivity(intent);
+    }
+
+    public void profilSelect(View v) {
+        devSend devSendActivity = new devSend();
+        devSendActivity.imageChooser(v);
     }
 }

@@ -63,7 +63,11 @@ public class devSend extends AppCompatActivity {
                         Bitmap selectedImageBitmap;
                         try {
                             selectedImageBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(),selectedImageUri);
-                            imageView.setImageBitmap(selectedImageBitmap);
+                            //IVPreviewImage.setImageBitmap(selectedImageBitmap);
+                            Intent resultIntent = new Intent();
+                            resultIntent.setData(selectedImageUri);
+                            setResult(Activity.RESULT_OK, resultIntent);
+                            finish();
                         }
                         catch (IOException e) {
                             e.printStackTrace();
