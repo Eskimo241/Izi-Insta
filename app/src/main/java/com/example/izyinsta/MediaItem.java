@@ -13,6 +13,8 @@ import java.util.Date;
 //        isTrending,
 //        userCreator,
 //        date)
+//et
+//Users (userId, username, hashedpasswd, createDate, access, mail) -> ajouter profilPicture / enlever access
 
 public class MediaItem {
     private Integer imageId;
