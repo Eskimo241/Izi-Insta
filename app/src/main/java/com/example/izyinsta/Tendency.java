@@ -3,18 +3,10 @@ package com.example.izyinsta;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import java.lang.ref.Reference;
-import java.util.List;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class Tendency extends AppCompatActivity {
 
@@ -28,7 +20,7 @@ public class Tendency extends AppCompatActivity {
 
         //---Images et Gifs---------------------------------------------------------------------
 
-        RecyclerView recyclerView = findViewById(R.id.profilImgScroller);
+        RecyclerView recyclerView = findViewById(R.id.tendencyImgScroller);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         // ... (Récupération des données depuis le serveur à faire) ...
@@ -54,20 +46,29 @@ public class Tendency extends AppCompatActivity {
 
         //-------------------------------------------------------------------------------------
 
-        ImageView myProfilIcon = findViewById(R.id.tendencyProfilIcon);
-
-        final Tendency tendency = this;
-        myProfilIcon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(tendency, Profil.class);
-                startActivity(intent);
-            }
-        });
-
     }
+
+    //Pour tester l'envoi vers le serveur avec la classe devSend (remplacé par AddImage)
     public void goSend(View v) {
         Intent intent = new Intent(this, devSend.class);
+        startActivity(intent);
+    }
+
+    //Redirection vers les autres pages de l'appli
+    public void toSearchPage(View v) {
+        Intent intent = new Intent(this, Search.class);
+        startActivity(intent);
+    }
+    public void toAddImagePage(View v) {
+        Intent intent = new Intent(this, AddImage.class);
+        startActivity(intent);
+    }
+    public void toLikesPage(View v) {
+        Intent intent = new Intent(this, Likes.class);
+        startActivity(intent);
+    }
+    public void toProfilPage(View v) {
+        Intent intent = new Intent(this, Profil.class);
         startActivity(intent);
     }
 }

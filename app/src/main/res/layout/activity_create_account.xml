@@ -169,7 +169,7 @@
         android:layout_height="wrap_content"
         android:onClick="login"
         android:text="Vous vous êtes déjà inscrit ? Connectez-vous"
-        android:textColor="#FFFFFF"
+        android:textColor="#9C4179"
         android:textSize="15dp"
         app:layout_constraintBottom_toTopOf="@+id/textNameInput"
         app:layout_constraintEnd_toEndOf="parent"

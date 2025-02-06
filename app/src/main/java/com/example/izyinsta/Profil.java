@@ -43,19 +43,6 @@ public class Profil extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profil);
 
-        //---Scroll from one page to another--------------------------------------------------------
-
-        ImageView myHomeIcon = findViewById(R.id.profilHomeIcon);
-
-        final Profil profil = this;
-        myHomeIcon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(profil, Tendency.class);
-                startActivity(intent);
-            }
-        });
-
         Button buttonDisconnect = findViewById(R.id.buttonLogOff);
 
         //-------------------------------------------------------------------------------------------
@@ -183,6 +170,24 @@ public class Profil extends AppCompatActivity {
 
         Context context = getApplicationContext();
         Intent intent = new Intent(context, Home.class);
+        startActivity(intent);
+    }
+
+    //Redirection vers les autres pages de l'appli
+    public void toTendencyPage(View v) {
+        Intent intent = new Intent(this, Tendency.class);
+        startActivity(intent);
+    }
+    public void toSearchPage(View v) {
+        Intent intent = new Intent(this, Search.class);
+        startActivity(intent);
+    }
+    public void toAddImagePage(View v) {
+        Intent intent = new Intent(this, AddImage.class);
+        startActivity(intent);
+    }
+    public void toLikesPage(View v) {
+        Intent intent = new Intent(this, Likes.class);
         startActivity(intent);
     }
 }

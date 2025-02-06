@@ -1,11 +1,15 @@
 package com.example.izyinsta;
 
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.Glide;
+
 import java.util.List;
 
 public class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.ViewHolder> {
@@ -28,12 +32,11 @@ public class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.ViewHolder> 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         MediaItem mediaItem = mediaItems.get(position);
+        Uri mediaUri = mediaItem.getUri();
 
-        if (mediaItem.getType().equals("image")) {
-            // Charger l'image avec une bibliothèque comme Glide ou Picasso
-        } else if (mediaItem.getType().equals("gif")) {
-            // Charger le GIF avec une bibliothèque comme Glide ou pl.droidsonroids.gif
-        }
+        Glide.with(holder.imageView.getContext())
+                .load(mediaUri)
+                .into(holder.imageView);
     }
 
     //Pour savoir combien d'éléments on doit afficher

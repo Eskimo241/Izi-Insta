@@ -1,5 +1,7 @@
 package com.example.izyinsta;
 
+import android.net.Uri;
+
 import java.net.URL;
 import java.util.Date;
 
@@ -28,24 +30,11 @@ public class MediaItem {
     private String hashtag; // Mots-clé associés
     private Date date; //Date de publication
     private String type; // Type de média (image ou gif)
+    private Uri uri;
 
     //---Constructeur, getters et setters-----------------------------------------------------
 
-    public MediaItem () {
-        imageId = 00000;
-        imageName = "None";
-        //normalUrl = ;
-        //tinyUrl = ;
-        likes = 0;
-        likeThisDay = 0;
-        isTrending = Boolean.FALSE;
-        userCreator = "Dio Brando";
-        hashtag = "#jojostagram";
-        //date = ;
-        type = "None";
-    }
-
-    public MediaItem (Integer imageId,String imageName,URL normalUrl,URL tinyUrl,Integer likes,Integer likeThisDay,Boolean isTrending,String userCreator,String hashtag,Date date,String type) {
+    public MediaItem (Integer imageId,String imageName,URL normalUrl,URL tinyUrl,Integer likes,Integer likeThisDay,Boolean isTrending,String userCreator,String hashtag,Date date,String type,Uri uri) {
         this.imageId = imageId;
         this.imageName = imageName;
         this.normalUrl = normalUrl;
@@ -57,6 +46,7 @@ public class MediaItem {
         this.hashtag = hashtag;
         this.date = date;
         this.type = type;
+        this.uri = uri;
     }
 
     public Integer getImageId() {
@@ -134,6 +124,11 @@ public class MediaItem {
     }
     public void setType(String type) {
         this.type = type;
+    }
+
+    public Uri getUri() { return uri; }
+    public void setUri(Uri uri) {
+        this.uri = uri;
     }
     //----------------------------------------------------------------------------------------
 }

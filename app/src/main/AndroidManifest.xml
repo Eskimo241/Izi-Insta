@@ -19,6 +19,15 @@
         android:theme="@style/Theme.IzyInsta"
         tools:targetApi="31">
         <activity
+            android:name=".Likes"
+            android:exported="false" />
+        <activity
+            android:name=".AddImage"
+            android:exported="false" />
+        <activity
+            android:name=".Search"
+            android:exported="false" />
+        <activity
             android:name=".Profil"
             android:exported="false" />
         <activity

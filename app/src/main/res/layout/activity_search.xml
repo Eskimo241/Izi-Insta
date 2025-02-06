@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Tendency">
+    tools:context=".Search">
 
     <ImageView
         android:id="@+id/bgGradientImage"
@@ -24,7 +24,7 @@
         android:layout_height="236dp"
         android:rotation="5"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/titleTendency"
+        app:layout_constraintTop_toBottomOf="@+id/titleSearch"
         app:srcCompat="@drawable/menacing_3" />
 
     <ImageView
@@ -37,15 +37,15 @@
         app:srcCompat="@drawable/menacing2" />
 
     <TextView
-        android:id="@+id/titleTendency"
+        android:id="@+id/titleSearch"
         android:layout_width="812dp"
         android:layout_height="72dp"
         android:background="#FFBD59"
         android:fontFamily="@font/poppins_medium"
         android:gravity="center"
-        android:text="TENDENCY"
+        android:text="Rechercher une image"
         android:textColor="#FFFFFF"
-        android:textSize="40dp"
+        android:textSize="30dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.501"
         app:layout_constraintStart_toStartOf="parent"
@@ -55,20 +55,20 @@
         android:id="@+id/tendencyIcon"
         android:layout_width="72dp"
         android:layout_height="73dp"
+        android:onClick="toTendencyPage"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@drawable/icons8_home_96" />
+        app:srcCompat="@drawable/icons8_home_96_default" />
 
     <ImageView
         android:id="@+id/searchIcon"
         android:layout_width="67dp"
         android:layout_height="72dp"
-        android:onClick="toSearchPage"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/profilIcon"
         app:layout_constraintHorizontal_bias="0.036"
         app:layout_constraintStart_toEndOf="@+id/tendencyIcon"
-        app:srcCompat="@drawable/icons8_loupe_100_default" />
+        app:srcCompat="@drawable/icons8_loupe_100" />
 
     <ImageView
         android:id="@+id/addImageIcon"
@@ -102,12 +102,23 @@
         app:srcCompat="@drawable/icons8_account_96_default" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/tendencyImgScroller"
-        android:layout_width="420dp"
-        android:layout_height="579dp"
+        android:id="@+id/searchImgScroller"
+        android:layout_width="409dp"
+        android:layout_height="506dp"
         app:layout_constraintBottom_toTopOf="@+id/addImageIcon"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <SearchView
+        android:id="@+id/searchBar"
+        android:layout_width="392dp"
+        android:layout_height="59dp"
+        android:layout_marginTop="8dp"
+        android:background="#FFFFFF"
+        app:layout_constraintBottom_toTopOf="@+id/searchImgScroller"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/titleTendency" />
+        app:layout_constraintTop_toBottomOf="@+id/titleSearch"
+        app:layout_constraintVertical_bias="0.042" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

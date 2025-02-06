@@ -19,18 +19,18 @@
         app:srcCompat="@drawable/bg" />
 
     <ImageView
-        android:id="@+id/menacingBG5"
+        android:id="@+id/menacingBG3"
         android:layout_width="219dp"
         android:layout_height="236dp"
         android:rotation="5"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/titleTendency"
+        app:layout_constraintTop_toBottomOf="@+id/titleSearch"
         app:srcCompat="@drawable/menacing_3" />
 
     <ImageView
-        android:id="@+id/menacingBG6"
-        android:layout_width="128dp"
-        android:layout_height="443dp"
+        android:id="@+id/menacingBG4"
+        android:layout_width="127dp"
+        android:layout_height="444dp"
         android:rotation="-5"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -48,44 +48,48 @@
         app:srcCompat="@drawable/box" />
 
     <ImageView
-        android:id="@+id/profilAddIcon"
+        android:id="@+id/addImageIcon"
         android:layout_width="68dp"
         android:layout_height="75dp"
+        android:onClick="toAddImagePage"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/profilLikeIcon"
-        app:layout_constraintStart_toEndOf="@+id/profilSearchIcon"
+        app:layout_constraintEnd_toStartOf="@+id/likesIcon"
+        app:layout_constraintStart_toEndOf="@+id/searchIcon"
         app:srcCompat="@drawable/icons8_plus_100_default" />
 
     <ImageView
-        android:id="@+id/profilHomeIcon"
+        android:id="@+id/tendencyIcon"
         android:layout_width="72dp"
         android:layout_height="73dp"
+        android:onClick="toTendencyPage"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@drawable/icons8_home_96_default" />
 
     <ImageView
-        android:id="@+id/profilSearchIcon"
+        android:id="@+id/searchIcon"
         android:layout_width="67dp"
         android:layout_height="72dp"
+        android:onClick="toSearchPage"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/profilProfilIcon"
+        app:layout_constraintEnd_toStartOf="@+id/profilIcon"
         app:layout_constraintHorizontal_bias="0.051"
-        app:layout_constraintStart_toEndOf="@+id/profilHomeIcon"
+        app:layout_constraintStart_toEndOf="@+id/tendencyIcon"
         app:srcCompat="@drawable/icons8_loupe_100_default" />
 
     <ImageView
-        android:id="@+id/profilLikeIcon"
+        android:id="@+id/likesIcon"
         android:layout_width="76dp"
         android:layout_height="75dp"
+        android:onClick="toLikesPage"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/profilProfilIcon"
+        app:layout_constraintEnd_toStartOf="@+id/profilIcon"
         app:layout_constraintHorizontal_bias="0.935"
-        app:layout_constraintStart_toEndOf="@+id/profilHomeIcon"
+        app:layout_constraintStart_toEndOf="@+id/tendencyIcon"
         app:srcCompat="@drawable/icons8_heart_100_default" />
 
     <ImageView
-        android:id="@+id/profilProfilIcon"
+        android:id="@+id/profilIcon"
         android:layout_width="70dp"
         android:layout_height="76dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -108,7 +112,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/titleRecentAdd"
+        android:id="@+id/titleProfil2"
         android:layout_width="812dp"
         android:layout_height="72dp"
         android:layout_marginTop="20dp"
@@ -194,11 +198,11 @@
         android:id="@+id/profilImgScroller"
         android:layout_width="414dp"
         android:layout_height="268dp"
-        app:layout_constraintBottom_toTopOf="@+id/profilAddIcon"
+        app:layout_constraintBottom_toTopOf="@+id/addImageIcon"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/titleRecentAdd"
+        app:layout_constraintTop_toBottomOf="@+id/titleProfil2"
         app:layout_constraintVertical_bias="0.75" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
