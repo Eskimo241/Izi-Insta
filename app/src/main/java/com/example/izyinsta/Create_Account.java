@@ -89,9 +89,25 @@ public class Create_Account extends AppCompatActivity {
                             }
                             else {
                                 Log.d("DBG", "CreateAccountFailed");
-                                Log.d("DBG", "onResponse: "+response);
-                                statusText.setText("Création de compte échouée");
-                            }
+                                Log.d("DBG", "onResponse: "+myResponse);
+                                switch (obj.getString("success")) {
+                                    case "2":
+                                        statusText.setText("Email invalide");
+                                        break;
+                                    case "3":
+                                        statusText.setText("Email déjà utilisé");
+                                        break;
+                                    case "4":
+                                        statusText.setText("Nom d'utilisateur invalide.");
+                                        break;
+                                    case "5":
+                                        statusText.setText("Nom d'utilisateur déjà utilisé");
+                                        break;
+                                    default:
+                                        statusText.setText("Unknown error");
+                                }
+
+                        }
                         } catch (JSONException e) {
                             throw new RuntimeException(e);
                         }

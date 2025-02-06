@@ -86,7 +86,7 @@ public class Home extends AppCompatActivity {
                 .post(body)
                 .build();
 
-        Log.d("fetchPost", "fetchPost: "+request);
+        Log.d("DBG", "fetchPost: "+request);
         client.newCall(request).enqueue(new okhttp3.Callback() {
             @Override
             public void onFailure(@NonNull okhttp3.Call call, @NonNull IOException e) {
@@ -99,6 +99,7 @@ public class Home extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     assert response.body() != null;
                     final String myResponse = response.body().string();
+                    Log.d("DBG", "onResponse: "+myResponse);
                     Home.this.runOnUiThread(() -> {
                         try {
                             JSONObject obj = new JSONObject(myResponse);
