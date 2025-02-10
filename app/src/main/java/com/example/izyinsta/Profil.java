@@ -1,9 +1,13 @@
 package com.example.izyinsta;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Button;
@@ -18,36 +22,43 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import java.io.IOException;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
+
+
+import okhttp3.Call;
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 import android.util.Base64;
-import android.widget.Toast;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
-import java.util.HashMap;
-import java.util.Map;
 
 
 public class Profil extends AppCompatActivity {
 
     ImageView profilPicture;
     ActivityResultLauncher<Intent> launchSomeActivity;
+    String servUrl = "http://android.chocolatine-rt.fr:7217/androidServ/";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profil);
 
+
         Button buttonDisconnect = findViewById(R.id.buttonLogOff);
 
         //-------------------------------------------------------------------------------------------
         //---Select Profil Picture / Send to Server / Load from Server-------------------------------------------
         profilPicture = findViewById(R.id.profilPicture);
+        SharedPreferences preferences = getSharedPreferences("com.example.izyinsta.PREFERENCE_FILE_KEY", Context.MODE_PRIVATE);
+
+        String savedUsername = preferences.getString("username", "");
 
         launchSomeActivity = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
@@ -57,7 +68,10 @@ public class Profil extends AppCompatActivity {
                         if (data != null && data.getData() != null) {
                             Uri selectedImageUri = data.getData();
                             try {
+                                //Alors je met un commentaire ici, mais en vrai c'est Pierre qui a fait ça, j'ai pas moyen d'expliquer ni comprendre
                                 Bitmap selectedImageBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImageUri);
+                                //On fait l'upload de l'image avec le nom d'utilisateur pour faire le lien dans le BDD
+                                uploadImageToServer(selectedImageBitmap, savedUsername);
                                 profilPicture.setImageBitmap(selectedImageBitmap);
                             } catch (IOException e) {
                                 e.printStackTrace();
@@ -66,9 +80,13 @@ public class Profil extends AppCompatActivity {
                     }
                 });
 
+        loadProfilePicture(savedUsername);
+
+
         profilPicture.setOnClickListener(v -> imageChooser());
 
     }
+
 
     public void imageChooser() {
         Intent i = new Intent();
@@ -78,39 +96,49 @@ public class Profil extends AppCompatActivity {
     }
 
     //$Partie d'envoi vers le serveur :
-    private void uploadImageToServer(Bitmap bitmap, final int userId) {
-        RequestQueue queue = Volley.newRequestQueue(this);
-        String url = "http://android.chocolatine-rt.fr:7217/androidServ/uploadImage.php";
+    private void uploadImageToServer(Bitmap bitmap, String savedUsername) {
 
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        Toast.makeText(Profil.this, "Image uploaded successfully", Toast.LENGTH_SHORT).show();
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(Profil.this, "Error uploading image: " + error.toString(), Toast.LENGTH_SHORT).show();
-                    }
-                }) {
+        //On fait une vérification, mais en vrai si ça fail, c'est qu'on est pas connecté...
+        if(savedUsername.equals("")) {
+            Log.e("DBG", "uploadImageToServer: No username found in shared preferences");
+            return;
+        }
+        //Blabla on fait le client et la requête
+        OkHttpClient client = new OkHttpClient();
 
-            // Pour envoyer l'image encodée et l'ID de l'utilisateur au serveur.
+        RequestBody body = new FormBody.Builder()
+                //On fait un POST avec l'image encodée en b64
+                .add("image", encodeImage(bitmap))
+                .add("username", savedUsername)
+                .build();
+
+        //On envoie la requête
+        Request request = new Request.Builder()
+                .url(servUrl + "testImg.php")
+                .post(body)
+                .build();
+
+        Log.d("DBG", "fetchPost: "+request);
+        client.newCall(request).enqueue(new okhttp3.Callback() {
             @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> params = new HashMap<>();
-                String imageData = encodeImage(bitmap);
-                params.put("image", imageData);
-                params.put("userId", String.valueOf(userId)); // Envoie l'ID de l'utilisateur
-                return params;
+            public void onFailure(@NonNull okhttp3.Call call, @NonNull IOException e) {
+                Log.d("fetchPost", "onFailure: "+e.getMessage());
             }
-        };
 
-        queue.add(stringRequest);
+            @Override
+            //Ici pour le coup on a pas besoin de réponse, un peu la flemme de faire qqchose
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    Log.d("DBG", "onResponse: "+response);
+                }
+
+
+            }
+        });
+
     }
 
-    //Convertit l'image en une chaîne de caractères pour l'envoyer dans la requête POST.
+    //Convertit l'image en une chaîne de caractères pour l'envoyer dans la requête POST:
     private String encodeImage(Bitmap bitmap) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
@@ -120,43 +148,72 @@ public class Profil extends AppCompatActivity {
 
     // ... (autres méthodes)
 
-    private void saveProfilePicture(Bitmap bitmap, int userId) {
-        uploadImageToServer(bitmap, userId);
-    }
 
-    //$Partie sur la récupération de l'image du Serveur jusqu'à l'appli :
-    private void loadProfilePicture(int userId) {
-        RequestQueue queue = Volley.newRequestQueue(this);
-        String url = "http://android.chocolatine-rt.fr:7217/androidServ/loadImage.php" + userId;
 
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        if (response != null && !response.isEmpty()) {
-                            try {
-                                byte[] imageBytes = Base64.decode(response, Base64.DEFAULT);
-                                Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
-                                profilPicture.setImageBitmap(bitmap);
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                                // Gérer les erreurs de décodage
-                            }
-                        } else {
-                            // L'utilisateur n'a pas encore d'image de profil
-                            profilPicture.setImageResource(R.drawable.icons8_account_96); // Image par défaut
+    //Partie sur la récupération de l'image du Serveur jusqu'à l'appli :
+    private void loadProfilePicture(String savedUsername) {
+        String url = "http://android.chocolatine-rt.fr:7217/androidServ/";
+        OkHttpClient client = new OkHttpClient();
+        if(savedUsername.equals("")) {
+            Log.e("DBG", "uploadImageToServer: No username found in shared preferences");
+            return;
+        }
+        //On fait une requête, on a besoin que du nom d'utilisateur pour le serveur
+        RequestBody body = new FormBody.Builder()
+                .add("username", savedUsername)
+                .build();
+
+        Request request = new Request.Builder()
+                .url(url + "loadImage.php")
+                .post(body)
+                .build();
+
+        Log.d("DBG", "fetchPost: "+request);
+        client.newCall(request).enqueue(new okhttp3.Callback() {
+            @Override
+            public void onFailure(@NonNull okhttp3.Call call, @NonNull IOException e) {
+                Log.d("fetchPost", "onFailure: "+e.getMessage());
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                //Le serveur répond une image encodée en b64 dans le format JSON avec le clef "image"
+                if (response.isSuccessful()) {
+
+                    assert response.body() != null;
+                    //Ici on récup le corps de la réponse, entre autre le contenu de la page/ce qui nous intéresse fortement (j'ai pas du tout passé 20min à chercher le pb alors que ct ça qui me manquait)
+                    final String myResponse = response.body().string();
+                    Log.d("DBG", "onResponse: "+myResponse);
+
+                    Profil.this.runOnUiThread(() -> {
+                        try {
+                            //On convertit la réponse en objet JSON qu'on peut manipuler facilement
+                            JSONObject obj = new JSONObject(myResponse);
+
+                            Log.d("DBG", "onResponse: "+obj.toString()); //Le log des familles
+                            //On récup l'image encodée en b64
+                            String image = obj.getString("image");
+
+                            Log.d("DBG", "IMG: "+image);//Encore un log des familles
+
+                            byte[] decodedString = Base64.decode(image, Base64.DEFAULT);//Gépéto, on décode l'image
+
+                            Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length); //Gépéto, on convertit l'image en Bitmap
+
+                            profilPicture.setImageBitmap(decodedByte); //On change l'image du profil avec l'image récupérée
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        // Gérer les erreurs de réseau
-                        Toast.makeText(Profil.this, "Error loading profile picture: " + error.toString(), Toast.LENGTH_SHORT).show();
-                    }
-                });
+                    });
+                }
+                else {
+                    Log.d("fetchPost", "onResponse: "+response.toString());
+                }
 
-        queue.add(stringRequest);
+
+            }
+        });
+
     }
 
     //----------------------------------------------------------------------------------------------
