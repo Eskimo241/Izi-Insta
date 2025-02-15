@@ -23,7 +23,8 @@ import okhttp3.Response;
 import org.json.JSONObject;
 import org.json.JSONException;
 import android.content.Context;
-
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLSession;
 
 
 public class Home extends AppCompatActivity {
@@ -32,7 +33,7 @@ public class Home extends AppCompatActivity {
     private EditText password;
     private TextView dbgText;
 
-    public String servUrl = "http://android.chocolatine-rt.fr:7217/androidServ/";
+    public String servUrl = "https://android.chocolatine-rt.fr/androidServ/";
     //public String servUrl = "http://10.192.16.90/androidServ/";
 
 
@@ -73,7 +74,15 @@ public class Home extends AppCompatActivity {
     }
 
     public void register (View v) {
-        OkHttpClient client = new OkHttpClient();
+        OkHttpClient client = new OkHttpClient.Builder()
+                .hostnameVerifier(new HostnameVerifier() {
+                    @Override
+                    public boolean verify(String hostname, SSLSession session) {
+                        return hostname.equals("android.chocolatine-rt.fr") || hostname.endsWith(".eu.ngrok.io");
+                    }
+                })
+                .build();
+
 
         RequestBody body = new FormBody.Builder()
                 .add("username", username.getText().toString())
@@ -97,6 +106,7 @@ public class Home extends AppCompatActivity {
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (response.isSuccessful()) {
+                    Log.d("dbg", "onResponse: "+response);
                     assert response.body() != null;
                     final String myResponse = response.body().string();
                     Log.d("DBG", "onResponse: "+myResponse);

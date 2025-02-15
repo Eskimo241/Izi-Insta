@@ -37,12 +37,15 @@ import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLSession;
+
 
 public class Profil extends AppCompatActivity {
 
     ImageView profilPicture;
     ActivityResultLauncher<Intent> launchSomeActivity;
-    String servUrl = "http://android.chocolatine-rt.fr:7217/androidServ/";
+    String servUrl = "https://android.chocolatine-rt.fr/androidServ/";
 
 
     @Override
@@ -152,8 +155,15 @@ public class Profil extends AppCompatActivity {
 
     //Partie sur la récupération de l'image du Serveur jusqu'à l'appli :
     private void loadProfilePicture(String savedUsername) {
-        String url = "http://android.chocolatine-rt.fr:7217/androidServ/";
-        OkHttpClient client = new OkHttpClient();
+        String url = "http://android.chocolatine-rt.fr/androidServ/";
+        OkHttpClient client = new OkHttpClient.Builder()
+                .hostnameVerifier(new HostnameVerifier() {
+                    @Override
+                    public boolean verify(String hostname, SSLSession session) {
+                        return hostname.equals("android.chocolatine-rt.fr") || hostname.endsWith(".eu.ngrok.io");
+                    }
+                })
+                .build();
         if(savedUsername.equals("")) {
             Log.e("DBG", "uploadImageToServer: No username found in shared preferences");
             return;
