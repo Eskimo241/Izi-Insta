@@ -6,17 +6,17 @@ import java.net.URL;
 import java.util.Date;
 
 //Dans la BDD :
-//Images (imagesId,
+//Images (mediaId,
 //        imageName,
 //        tinyUrl,
-//        NormalUrl,
+//        normalUrl,
 //        likes,
 //        likesThisDay,
 //        isTrending,
 //        userCreator,
 //        date)
 //et
-//Users (userId, username, hashedpasswd, createDate, access, mail) -> ajouter profilPicture / enlever access
+//Users (userId, username, hashedpasswd, createDate, pfp, mail)
 
 public class MediaItem {
     private Integer imageId;

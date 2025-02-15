@@ -155,7 +155,7 @@ public class Profil extends AppCompatActivity {
 
     //Partie sur la récupération de l'image du Serveur jusqu'à l'appli :
     private void loadProfilePicture(String savedUsername) {
-        String url = "http://android.chocolatine-rt.fr/androidServ/";
+
         OkHttpClient client = new OkHttpClient.Builder()
                 .hostnameVerifier(new HostnameVerifier() {
                     @Override
@@ -174,7 +174,7 @@ public class Profil extends AppCompatActivity {
                 .build();
 
         Request request = new Request.Builder()
-                .url(url + "loadImage.php")
+                .url(servUrl + "loadImage.php")
                 .post(body)
                 .build();
 
