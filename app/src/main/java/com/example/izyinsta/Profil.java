@@ -117,7 +117,7 @@ public class Profil extends AppCompatActivity {
 
         //On envoie la requête
         Request request = new Request.Builder()
-                .url(servUrl + "testImg.php")
+                .url(servUrl + "uploadPfp.php")
                 .post(body)
                 .build();
 
@@ -174,7 +174,7 @@ public class Profil extends AppCompatActivity {
                 .build();
 
         Request request = new Request.Builder()
-                .url(servUrl + "loadImage.php")
+                .url(servUrl + "loadPfp.php")
                 .post(body)
                 .build();
 
@@ -203,6 +203,9 @@ public class Profil extends AppCompatActivity {
                             Log.d("DBG", "onResponse: "+obj.toString()); //Le log des familles
                             //On récup l'image encodée en b64
                             String image = obj.getString("image");
+                            if (image.equals("default")) {
+                                return;
+                            }
 
                             Log.d("DBG", "IMG: "+image);//Encore un log des familles
 
