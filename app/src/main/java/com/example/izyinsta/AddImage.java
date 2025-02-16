@@ -9,8 +9,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.provider.OpenableColumns;
 import android.util.Base64;
 import android.util.Log;
 import android.widget.Button;
@@ -75,11 +77,12 @@ public class AddImage extends AppCompatActivity {
                         Intent data = result.getData();
                         if (data != null && data.getData() != null) {
                             Uri selectedImageUri = data.getData();
-                            String type = getMediaType(selectedImageUri);
+                            String type = getMediaType(selectedImageUri); // Récupérer l'extension du fichier
+                            String fileName = getFileNameFromUri(selectedImageUri); // Récupérer le nom du fichier d'origine
 
                             MediaItem mediaItem = new MediaItem(
                                     null, // imageId (à adapter)
-                                    null, // imageName (à adapter)
+                                    fileName, // imageName (à adapter)
                                     null, // normalUrl (à adapter)
                                     null, // tinyUrl (à adapter)
                                     null, // likes (à adapter)
@@ -104,6 +107,7 @@ public class AddImage extends AppCompatActivity {
         addImage.setOnClickListener(v -> imageChooser());
     }
 
+    //Selectionner l'image depuis sa galerie
     public void imageChooser() {
         Intent i = new Intent();
         i.setType("image/*");
@@ -111,23 +115,30 @@ public class AddImage extends AppCompatActivity {
         launchSomeActivity.launch(i);
     }
 
+    // Récupérer l'extension du fichier
     private String getMediaType(Uri uri) {
         ContentResolver cR = getContentResolver();
         String type = cR.getType(uri);
-        if (type != null && type.startsWith("image/")) {
-            return "image";
-        } else if (type != null && type.equals("image/gif")) {
-            return "gif";
+        return type != null ? type : "image/jpeg"; // Type par défaut si non reconnu (image/jpeg est un bon choix courant)
+    }
+
+    // Récupérer le nom du fichier d'origine
+    private String getFileNameFromUri(Uri uri) {
+        Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+        if (cursor != null && cursor.moveToFirst()) {
+            int nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+            String fileName = cursor.getString(nameIndex);
+            cursor.close();
+            return fileName;
         }
-        return "image"; // Type par défaut si non reconnu
+        return null;
     }
 
 
 
 
 
-
-    //$Partie d'envoi vers le serveur :
+    //---Partie d'envoi vers le serveur :-----------------------------------------------------------
     private void uploadUserImage(MediaItem mediaItem, String savedUsername) {
 
         //On fait une vérification, mais en vrai si ça fail, c'est qu'on est pas connecté...
@@ -151,7 +162,7 @@ public class AddImage extends AppCompatActivity {
             RequestBody body = new FormBody.Builder()
                     .add("image", encodedImage)
                     .add("username", savedUsername)
-                    .add("type", mediaItem.getType()) // Ajout du type de média
+                    .add("imageName", mediaItem.getImageName()) // Envoyer le nom du fichier au serveur
                     .build();
 
             //On envoie la requête
@@ -221,7 +232,7 @@ public class AddImage extends AppCompatActivity {
 
 
 
-    //$Partie de récupération depuis le serveur :
+    //---Partie de récupération depuis le serveur :-------------------------------------------------
     private void loadUserImages(String savedUsername) {
         OkHttpClient client = new OkHttpClient.Builder()
                 .hostnameVerifier(new HostnameVerifier() {
@@ -311,7 +322,7 @@ public class AddImage extends AppCompatActivity {
 
 
 
-    //Redirection vers les autres pages de l'appli
+    //---Redirection vers les autres pages de l'appli-----------------------------------------------
     public void toTendencyPage(View v) {
         Intent intent = new Intent(this, Tendency.class);
         startActivity(intent);
