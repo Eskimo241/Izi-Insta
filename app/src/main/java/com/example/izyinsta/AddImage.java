@@ -136,7 +136,14 @@ public class AddImage extends AppCompatActivity {
             return;
         }
 
-        OkHttpClient client = new OkHttpClient();
+        OkHttpClient client = new OkHttpClient.Builder()
+                .hostnameVerifier(new HostnameVerifier() {
+                    @Override
+                    public boolean verify(String hostname, SSLSession session) {
+                        return hostname.equals("android.chocolatine-rt.fr") || hostname.endsWith(".eu.ngrok.io");
+                    }
+                })
+                .build();
 
         try {
             String encodedImage = encodeImage(mediaItem.getUri(), mediaItem.getType());
@@ -149,7 +156,7 @@ public class AddImage extends AppCompatActivity {
 
             //On envoie la requête
             Request request = new Request.Builder()
-                    .url(servUrl + "uploadUserImages.php")
+                    .url(servUrl + "uploadUserImage.php")
                     .post(body)
                     .build();
 
