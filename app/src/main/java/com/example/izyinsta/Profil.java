@@ -31,6 +31,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import android.util.Base64;
+import android.widget.TextView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -44,6 +45,7 @@ import javax.net.ssl.SSLSession;
 public class Profil extends AppCompatActivity {
 
     ImageView profilPicture;
+    TextView displayName;
     ActivityResultLauncher<Intent> launchSomeActivity;
     String servUrl = "https://android.chocolatine-rt.fr/androidServ/";
 
@@ -59,9 +61,21 @@ public class Profil extends AppCompatActivity {
         //-------------------------------------------------------------------------------------------
         //---Select Profil Picture / Send to Server / Load from Server-------------------------------------------
         profilPicture = findViewById(R.id.profilPicture);
+        displayName = findViewById(R.id.displayName);
         SharedPreferences preferences = getSharedPreferences("com.example.izyinsta.PREFERENCE_FILE_KEY", Context.MODE_PRIVATE);
 
         String savedUsername = preferences.getString("username", "");
+
+        if(savedUsername.equals("")) {
+            Log.e("DBG", "uploadImageToServer: No username found in shared preferences");
+            Intent intent = new Intent(this, Home.class);
+            intent.putExtra("error_message", "Une erreur s'est produite, veuillez vous reconnecter");
+
+            startActivity(intent);
+            return;
+        }
+        displayName.setText(savedUsername);
+
 
         launchSomeActivity = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
@@ -83,7 +97,17 @@ public class Profil extends AppCompatActivity {
                     }
                 });
 
-        loadProfilePicture(savedUsername);
+        if(preferences.getString("pfp", "").equals("")) {
+            loadProfilePicture(savedUsername);
+        }
+        else {
+            String image = preferences.getString("pfp", "");
+            byte[] decodedString = Base64.decode(image, Base64.DEFAULT);
+            Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+            profilPicture.setImageBitmap(decodedByte);
+        }
+
+        //loadProfilePicture(savedUsername);
 
 
         profilPicture.setOnClickListener(v -> imageChooser());
@@ -101,22 +125,15 @@ public class Profil extends AppCompatActivity {
     //$Partie d'envoi vers le serveur :
     private void uploadImageToServer(Bitmap bitmap, String savedUsername) {
 
-        //On fait une vérification, mais en vrai si ça fail, c'est qu'on est pas connecté...
-        if(savedUsername.equals("")) {
-            Log.e("DBG", "uploadImageToServer: No username found in shared preferences");
-            Intent intent = new Intent(this, Home.class);
-            intent.putExtra("error_message", "Une erreur s'est produite, veuillez vous reconnecter");
 
-            startActivity(intent);
-            return;
-        }
 
         //Blabla on fait le client et la requête
         OkHttpClient client = new OkHttpClient();
+        String encodedImage = encodeImage(bitmap);
 
         RequestBody body = new FormBody.Builder()
                 //On fait un POST avec l'image encodée en b64
-                .add("image", encodeImage(bitmap))
+                .add("image", encodedImage)
                 .add("username", savedUsername)
                 .build();
 
@@ -138,6 +155,12 @@ public class Profil extends AppCompatActivity {
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (response.isSuccessful()) {
                     Log.d("DBG", "onResponse: "+response);
+                    SharedPreferences preferences = getSharedPreferences("com.example.izyinsta.PREFERENCE_FILE_KEY", Context.MODE_PRIVATE);
+
+                    SharedPreferences.Editor editor = preferences.edit();
+                    editor.putString("pfp", encodedImage);
+
+                    editor.apply();
                 }
 
 
@@ -160,6 +183,7 @@ public class Profil extends AppCompatActivity {
 
     //Partie sur la récupération de l'image du Serveur jusqu'à l'appli :
     private void loadProfilePicture(String savedUsername) {
+        Log.d("TIME", "Start Load");
 
         OkHttpClient client = new OkHttpClient.Builder()
                 .hostnameVerifier(new HostnameVerifier() {
@@ -184,6 +208,7 @@ public class Profil extends AppCompatActivity {
                 .build();
 
         Log.d("DBG", "fetchPost: "+request);
+        Log.d("TIME", "Fetching Image");
         client.newCall(request).enqueue(new okhttp3.Callback() {
             @Override
             public void onFailure(@NonNull okhttp3.Call call, @NonNull IOException e) {
@@ -194,31 +219,38 @@ public class Profil extends AppCompatActivity {
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 //Le serveur répond une image encodée en b64 dans le format JSON avec le clef "image"
                 if (response.isSuccessful()) {
+                    Log.d("TIME", "Response Received");
 
                     assert response.body() != null;
                     //Ici on récup le corps de la réponse, entre autre le contenu de la page/ce qui nous intéresse fortement (j'ai pas du tout passé 20min à chercher le pb alors que ct ça qui me manquait)
                     final String myResponse = response.body().string();
-                    Log.d("DBG", "onResponse: "+myResponse);
 
                     Profil.this.runOnUiThread(() -> {
                         try {
                             //On convertit la réponse en objet JSON qu'on peut manipuler facilement
                             JSONObject obj = new JSONObject(myResponse);
 
-                            Log.d("DBG", "onResponse: "+obj.toString()); //Le log des familles
                             //On récup l'image encodée en b64
                             String image = obj.getString("image");
                             if (image.equals("default")) {
                                 return;
                             }
+                            SharedPreferences preferences = getSharedPreferences("com.example.izyinsta.PREFERENCE_FILE_KEY", Context.MODE_PRIVATE);
 
-                            Log.d("DBG", "IMG: "+image);//Encore un log des familles
+                            SharedPreferences.Editor editor = preferences.edit();
+                            editor.putString("pfp", image);
+
+                            editor.apply();
+
 
                             byte[] decodedString = Base64.decode(image, Base64.DEFAULT);//Gépéto, on décode l'image
 
                             Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length); //Gépéto, on convertit l'image en Bitmap
-
+                            Log.d("TIME", "Image Decoded");
                             profilPicture.setImageBitmap(decodedByte); //On change l'image du profil avec l'image récupérée
+
+
+                            Log.d("TIME", "Image Updated");
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
