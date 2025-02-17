@@ -103,8 +103,8 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/tendencyImgScroller"
-        android:layout_width="420dp"
-        android:layout_height="579dp"
+        android:layout_width="421dp"
+        android:layout_height="586dp"
         app:layout_constraintBottom_toTopOf="@+id/addImageIcon"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

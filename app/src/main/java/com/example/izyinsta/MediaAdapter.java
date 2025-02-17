@@ -33,10 +33,23 @@ public class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.ViewHolder> 
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         MediaItem mediaItem = mediaItems.get(position);
         Uri mediaUri = mediaItem.getUri();
+        String mediaNormalUrl = mediaItem.getNormalUrl();
 
-        Glide.with(holder.imageView.getContext())
-                .load(mediaUri)
-                .into(holder.imageView);
+        if (mediaItem.getUri() != null) {
+            // Cas : image ajoutée par l'utilisateur (URI)
+            Glide.with(holder.imageView.getContext())
+                    .load(mediaUri)
+                    .into(holder.imageView);
+        } else if (mediaItem.getNormalUrl() != null) {
+            // Cas : image provenant du serveur (normalURL)
+            Glide.with(holder.imageView.getContext())
+                    .load(mediaNormalUrl)
+                    .placeholder(R.drawable.ic_launcher_background) // Placeholder en cas de chargement
+                    .error(R.drawable.ic_launcher_foreground) // Image d'erreur en cas de problème
+                    .fitCenter() // Permet de centrer l'image dans le ImageView
+                    .into(holder.imageView);
+        }
+
     }
 
     //Pour savoir combien d'éléments on doit afficher
