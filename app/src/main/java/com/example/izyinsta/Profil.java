@@ -104,8 +104,13 @@ public class Profil extends AppCompatActivity {
         //On fait une vérification, mais en vrai si ça fail, c'est qu'on est pas connecté...
         if(savedUsername.equals("")) {
             Log.e("DBG", "uploadImageToServer: No username found in shared preferences");
+            Intent intent = new Intent(this, Home.class);
+            intent.putExtra("error_message", "Une erreur s'est produite, veuillez vous reconnecter");
+
+            startActivity(intent);
             return;
         }
+
         //Blabla on fait le client et la requête
         OkHttpClient client = new OkHttpClient();
 
