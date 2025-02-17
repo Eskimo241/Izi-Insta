@@ -2,9 +2,6 @@ package com.example.izyinsta;
 
 import android.net.Uri;
 
-import java.net.URL;
-import java.util.Date;
-
 //Dans la BDD :
 //Images (mediaId,
 //        imageName,
@@ -21,20 +18,20 @@ import java.util.Date;
 public class MediaItem {
     private Integer imageId;
     private String imageName;
-    private URL normalUrl; //Correspond aux images de taille normal
-    private URL tinyUrl; //Correspond aux images de petite taille
+    private String normalUrl; //Correspond aux images de taille normal
+    private String tinyUrl; //Correspond aux images de petite taille
     private Integer likes; //Nombre de likes total
     private Integer likeThisDay; // Nombre de like aujourd'hui
     private Boolean isTrending; // Si l'image ou gif est en tendance (dépend du nombre de like aujourd'hui)
     private String userCreator; //Celui qui a publié l'image
     private String hashtag; // Mots-clé associés
-    private Date date; //Date de publication
+    private String date; //Date de publication
     private String type; // Type de média (image ou gif)
     private Uri uri;
 
     //---Constructeur, getters et setters-----------------------------------------------------
 
-    public MediaItem (Integer imageId,String imageName,URL normalUrl,URL tinyUrl,Integer likes,Integer likeThisDay,Boolean isTrending,String userCreator,String hashtag,Date date,String type,Uri uri) {
+    public MediaItem (Integer imageId,String imageName,String normalUrl,String tinyUrl,Integer likes,Integer likeThisDay,Boolean isTrending,String userCreator,String hashtag,String date,String type,Uri uri) {
         this.imageId = imageId;
         this.imageName = imageName;
         this.normalUrl = normalUrl;
@@ -63,17 +60,17 @@ public class MediaItem {
         this.imageName = imageName;
     }
 
-    public URL getNormalUrl() {
+    public String getNormalUrl() {
         return normalUrl;
     }
-    public void setNormalUrl(URL normalUrl) {
+    public void setNormalUrl(String normalUrl) {
         this.normalUrl = normalUrl;
     }
 
-    public URL getTinyUrl() {
+    public String getTinyUrl() {
         return tinyUrl;
     }
-    public void setTinyUrl(URL tinyUrl) {
+    public void setTinyUrl(String tinyUrl) {
         this.tinyUrl = tinyUrl;
     }
 
@@ -112,10 +109,10 @@ public class MediaItem {
         this.hashtag = hashtag;
     }
 
-    public Date getDate() {
+    public String getDate() {
         return date;
     }
-    public void setDate(Date date) {
+    public void setDate(String date) {
         this.date = date;
     }
 

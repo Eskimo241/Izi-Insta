@@ -1,6 +1,7 @@
 package com.example.izyinsta;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -15,6 +16,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLSession;
@@ -82,15 +85,44 @@ public class Tendency extends AppCompatActivity {
                     //[{"mediaId":1,"imageName":...},{"mediaId":2,"imageName":...},...]
                     Tendency.this.runOnUiThread(() -> {
                         try {
-                            JSONArray mediaItems = new JSONArray(responseStr);
-                            for (int i = 0; i < mediaItems.length(); i++) {
-                                JSONObject mediaItem = mediaItems.getJSONObject(i);
+                            JSONArray mediaItemsJson = new JSONArray(responseStr); // Réponse JSON contenant un tableau d'images
+                            List<MediaItem> mediaItems = new ArrayList<>(); // Liste pour stocker les objets MediaItem
+                            for (int i = 0; i < mediaItemsJson.length(); i++) {
+                                JSONObject mediaItemJson = mediaItemsJson.getJSONObject(i);
 
-                                Log.d("DBG", "Media: "+mediaItem.toString());
+                                Log.d("DBG", "Media: "+mediaItemJson.toString());
                                 //-----------Ici on sépare les données à chaque itération-------------------:
                                 //{"mediaId":1,"imageName":...}
                                 //{"mediaId":2,"imageName":...}
+
+                                Integer mediaId = mediaItemJson.getInt("mediaId");
+                                String imageName = mediaItemJson.getString("imageName");
+                                String normalUrl = mediaItemJson.getString("normalUrl");
+                                String tinyUrl = mediaItemJson.getString("tinyUrl");
+                                Integer likes = mediaItemJson.getInt("likes");
+                                String date = mediaItemJson.getString("date");
+
+                                // Création de l'objet MediaItem avec les données récupérées
+                                MediaItem mediaItem = new MediaItem(
+                                        mediaId,
+                                        imageName,
+                                        "https://android.chocolatine-rt.fr/androidServ/addImg/"+normalUrl,
+                                        "https://android.chocolatine-rt.fr/androidServ/addImg/"+tinyUrl,
+                                        likes,
+                                        null, // likeThisDay (à adapter si nécessaire)
+                                        null, // isTrending (à adapter si nécessaire)
+                                        null, // userCreator (à adapter si nécessaire)
+                                        null, // hashtag (à adapter si nécessaire)
+                                        date,
+                                        null,
+                                        null
+                                );
+                                mediaItems.add(mediaItem);
                             }
+
+                            MediaAdapter mediaAdapter = new MediaAdapter(mediaItems);
+                            recyclerView.setAdapter(mediaAdapter);
+
                         } catch (JSONException e) {
                             throw new RuntimeException(e);
                         }
@@ -100,30 +132,6 @@ public class Tendency extends AppCompatActivity {
                 }
             }
         });
-
-        // ... (Récupération des données depuis le serveur à faire) ...
-
-        //Puis utilisation de retrofit2 pour récupérer et afficher les images / Gifs via MediaAdapter :
-
-        //call.enqueue(new Callback<List<MediaItem>>() {
-        //    @Override
-        //    public void onResponse(Call<List<MediaItem>> call, Response<List<MediaItem>> response) {
-        //        if (response.isSuccessful()) {
-        //            List<MediaItem> mediaItems = response.body();
-        //            MediaAdapter adapter = new MediaAdapter(mediaItems);
-        //            recyclerView.setAdapter(adapter);
-        //        } else {
-        //        // Gérer les erreurs
-        //        }
-        //    }
-
-        //    @Override
-        //    public void onFailure(Call<List<MediaItem>> call, Throwable t) {
-        //        // Gérer les erreurs
-        //    }
-
-        //-------------------------------------------------------------------------------------
-
     }
 
     //Pour tester l'envoi vers le serveur avec la classe devSend (remplacé par AddImage)

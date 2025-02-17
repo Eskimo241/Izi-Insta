@@ -76,7 +76,8 @@ public class AddImage extends AppCompatActivity {
                     if (result.getResultCode() == Activity.RESULT_OK) {
                         Intent data = result.getData();
                         if (data != null && data.getData() != null) {
-                            Uri selectedImageUri = data.getData();
+
+                            Uri selectedImageUri = data.getData(); // Récupérer l'URI du fichier
                             String type = getMediaType(selectedImageUri); // Récupérer l'extension du fichier
                             String fileName = getFileNameFromUri(selectedImageUri); // Récupérer le nom du fichier d'origine
 
@@ -272,16 +273,17 @@ public class AddImage extends AppCompatActivity {
 
                     AddImage.this.runOnUiThread(() -> {
                         try {
-                            JSONArray jsonArray = new JSONArray(myResponse); // Réponse JSON contenant un tableau d'images
+                            JSONArray mediaItemsJson = new JSONArray(myResponse); // Réponse JSON contenant un tableau d'images
+                            List<MediaItem> mediaItems = new ArrayList<>(); // Liste pour stocker les objets MediaItem
 
-                            List<MediaItem> userImages = new ArrayList<>(); // Liste pour stocker les objets MediaItem
+                            for (int i = 0; i < mediaItemsJson.length(); i++) {
+                                JSONObject mediaItemJson = mediaItemsJson.getJSONObject(i);
 
-                            for (int i = 0; i < jsonArray.length(); i++) {
-                                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                String imageName = mediaItemJson.getString("imageName");
+                                String imageUri = mediaItemJson.getString("imageUri"); // URI de l'image
+                                String type = mediaItemJson.getString("type"); // Type de média (image ou gif)
 
-                                String imageName = jsonObject.getString("imageName");
-                                String imageUri = jsonObject.getString("imageUri"); // URI de l'image
-                                String type = jsonObject.getString("type"); // Type de média (image ou gif)
+                                Log.d("DBG", "Media: "+mediaItemJson.toString());
 
                                 // Création de l'objet MediaItem avec les données récupérées
                                 MediaItem mediaItem = new MediaItem(
@@ -298,12 +300,12 @@ public class AddImage extends AppCompatActivity {
                                         type,
                                         Uri.parse(imageUri) // uri de l'image
                                 );
-                                userImages.add(mediaItem);
+                                mediaItems.add(mediaItem);
                             }
 
                             // Mise à jour de l'adaptateur avec les nouvelles images
-                            mediaItems.clear(); // Effacer les anciennes images
-                            mediaItems.addAll(userImages); // Ajouter les nouvelles images
+                            //mediaItems.clear(); // Effacer les anciennes images
+                            mediaItems.addAll(mediaItems); // Ajouter les nouvelles images
                             mediaAdapter.notifyDataSetChanged(); // Notifier l'adaptateur des changements
 
                         } catch (JSONException e) {
