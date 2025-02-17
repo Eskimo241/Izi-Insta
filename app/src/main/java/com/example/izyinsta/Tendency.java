@@ -106,8 +106,8 @@ public class Tendency extends AppCompatActivity {
                                 MediaItem mediaItem = new MediaItem(
                                         mediaId,
                                         imageName,
-                                        normalUrl,
-                                        tinyUrl,
+                                        "https://android.chocolatine-rt.fr/androidServ/addImg/"+normalUrl,
+                                        "https://android.chocolatine-rt.fr/androidServ/addImg/"+tinyUrl,
                                         likes,
                                         null, // likeThisDay (à adapter si nécessaire)
                                         null, // isTrending (à adapter si nécessaire)
