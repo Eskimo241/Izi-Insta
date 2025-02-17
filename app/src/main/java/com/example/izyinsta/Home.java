@@ -49,6 +49,13 @@ public class Home extends AppCompatActivity {
 
         dbgText = findViewById(R.id.dbgText);
 
+
+        Intent intent = getIntent();
+        String message = intent.getStringExtra("error_message");
+        if (message != null) {
+            dbgText.setText(message);
+        }
+
         //Checking if client has previously logged in using shared preferences
         SharedPreferences preferences = getSharedPreferences("com.example.izyinsta.PREFERENCE_FILE_KEY", Context.MODE_PRIVATE);
 
@@ -70,6 +77,7 @@ public class Home extends AppCompatActivity {
             password.setText(savedPassword);
             register(null);
         }
+
 
     }
 
