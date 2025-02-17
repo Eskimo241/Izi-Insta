@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Tendency">
+    tools:context=".Likes">
 
     <ImageView
         android:id="@+id/bgGradientImage"
@@ -24,7 +24,7 @@
         android:layout_height="236dp"
         android:rotation="5"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/titleTendency"
+        app:layout_constraintTop_toBottomOf="@+id/titleLikes"
         app:srcCompat="@drawable/menacing_3" />
 
     <ImageView
@@ -37,13 +37,13 @@
         app:srcCompat="@drawable/menacing2" />
 
     <TextView
-        android:id="@+id/titleTendency"
+        android:id="@+id/titleLikes"
         android:layout_width="812dp"
         android:layout_height="72dp"
         android:background="#FFBD59"
         android:fontFamily="@font/poppins_medium"
         android:gravity="center"
-        android:text="TENDENCY"
+        android:text="MES LIKES"
         android:textColor="#FFFFFF"
         android:textSize="40dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -55,9 +55,10 @@
         android:id="@+id/tendencyIcon"
         android:layout_width="72dp"
         android:layout_height="73dp"
+        android:onClick="toTendencyPage"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@drawable/icons8_home_96" />
+        app:srcCompat="@drawable/icons8_home_96_default" />
 
     <ImageView
         android:id="@+id/searchIcon"
@@ -85,12 +86,11 @@
         android:id="@+id/likesIcon"
         android:layout_width="76dp"
         android:layout_height="75dp"
-        android:onClick="toLikesPage"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/profilIcon"
         app:layout_constraintHorizontal_bias="0.95"
         app:layout_constraintStart_toStartOf="@+id/tendencyIcon"
-        app:srcCompat="@drawable/icons8_heart_100_default" />
+        app:srcCompat="@drawable/icons8_heart_100" />
 
     <ImageView
         android:id="@+id/profilIcon"
@@ -102,13 +102,12 @@
         app:srcCompat="@drawable/icons8_account_96_default" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/tendencyImgScroller"
-        android:layout_width="416dp"
-        android:layout_height="602dp"
+        android:id="@+id/likesImgScroller"
+        android:layout_width="420dp"
+        android:layout_height="579dp"
         app:layout_constraintBottom_toTopOf="@+id/addImageIcon"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintTop_toBottomOf="@+id/titleLikes" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

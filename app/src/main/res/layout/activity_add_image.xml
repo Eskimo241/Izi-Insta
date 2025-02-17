@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Tendency">
+    tools:context=".AddImage">
 
     <ImageView
         android:id="@+id/bgGradientImage"
@@ -24,7 +24,7 @@
         android:layout_height="236dp"
         android:rotation="5"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/titleTendency"
+        app:layout_constraintTop_toBottomOf="@+id/titleAddImage"
         app:srcCompat="@drawable/menacing_3" />
 
     <ImageView
@@ -37,13 +37,13 @@
         app:srcCompat="@drawable/menacing2" />
 
     <TextView
-        android:id="@+id/titleTendency"
+        android:id="@+id/titleAddImage"
         android:layout_width="812dp"
         android:layout_height="72dp"
         android:background="#FFBD59"
         android:fontFamily="@font/poppins_medium"
         android:gravity="center"
-        android:text="TENDENCY"
+        android:text="Ajouter une image"
         android:textColor="#FFFFFF"
         android:textSize="40dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -51,13 +51,32 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <TextView
+        android:id="@+id/titleAddImage2"
+        android:layout_width="812dp"
+        android:layout_height="72dp"
+        android:layout_marginTop="160dp"
+        android:background="#FFBD59"
+        android:fontFamily="@font/poppins_medium"
+        android:gravity="center"
+        android:text="Historique des ajouts"
+        android:textColor="#FFFFFF"
+        android:textSize="30dp"
+        app:layout_constraintBottom_toTopOf="@+id/addImgScroller"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
+
     <ImageView
         android:id="@+id/tendencyIcon"
         android:layout_width="72dp"
         android:layout_height="73dp"
+        android:onClick="toTendencyPage"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@drawable/icons8_home_96" />
+        app:srcCompat="@drawable/icons8_home_96_default" />
 
     <ImageView
         android:id="@+id/searchIcon"
@@ -74,11 +93,10 @@
         android:id="@+id/addImageIcon"
         android:layout_width="68dp"
         android:layout_height="75dp"
-        android:onClick="toAddImagePage"
         app:layout_constraintBottom_toBottomOf="@+id/bgGradientImage"
         app:layout_constraintEnd_toStartOf="@+id/likesIcon"
         app:layout_constraintStart_toEndOf="@+id/searchIcon"
-        app:srcCompat="@drawable/icons8_plus_100_default" />
+        app:srcCompat="@drawable/icons8_plus_100" />
 
 
     <ImageView
@@ -102,13 +120,25 @@
         app:srcCompat="@drawable/icons8_account_96_default" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/tendencyImgScroller"
+        android:id="@+id/addImgScroller"
         android:layout_width="416dp"
-        android:layout_height="602dp"
+        android:layout_height="420dp"
         app:layout_constraintBottom_toTopOf="@+id/addImageIcon"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.444"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0" />
+
+    <Button
+        android:id="@+id/buttonAddImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Ajouter"
+        android:textSize="30dp"
+        app:layout_constraintBottom_toTopOf="@+id/titleAddImage2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/titleAddImage" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

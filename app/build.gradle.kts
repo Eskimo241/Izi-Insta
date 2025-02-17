@@ -41,4 +41,9 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
     implementation("com.squareup.okhttp3:okhttp:4.9.3")
     implementation("com.google.code.gson:gson:2.8.9")
+    implementation ("com.squareup.retrofit2:retrofit:2.9.0") //Pour l'affichage des images / Gifs dans le RecyclerView
+    implementation ("com.squareup.retrofit2:converter-gson:2.9.0") //Idem
+    implementation ("com.android.volley:volley:1.2.1") //Pour les requêtes HTTP vers le serveur Web
+    implementation ("com.github.bumptech.glide:glide:4.15.1") // Glide pour le chargement de l'image (Media Item) avec l'URI dans l'adapter
+    annotationProcessor ("com.github.bumptech.glide:compiler:4.15.1") // Idem
 }
