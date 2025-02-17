@@ -1,6 +1,7 @@
 package com.example.izyinsta;
 
 import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -26,6 +27,19 @@ public class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.ViewHolder> 
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_media, parent, false);
         return new ViewHolder(view);
+
+    }
+
+    public class ViewHolder extends RecyclerView.ViewHolder {
+        ImageView imageView;
+        ImageView likeIcon;
+
+
+        public ViewHolder(@NonNull View itemView) {
+            super(itemView);
+            imageView = itemView.findViewById(R.id.imageView);
+            likeIcon = itemView.findViewById(R.id.likeImageView);
+        }
     }
 
     //Met à jour le contenu d'une vue (ViewHolder) en fonction des données à la position donnée
@@ -50,6 +64,13 @@ public class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.ViewHolder> 
                     .into(holder.imageView);
         }
 
+        holder.likeIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("DBG", "MediaId : "+mediaItem.getImageId());
+            }
+        });
+
     }
 
     //Pour savoir combien d'éléments on doit afficher
@@ -58,14 +79,7 @@ public class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.ViewHolder> 
         return mediaItems.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
-        ImageView imageView;
 
-        public ViewHolder(@NonNull View itemView) {
-            super(itemView);
-            imageView = itemView.findViewById(R.id.imageView);
-        }
-    }
 
 
 
