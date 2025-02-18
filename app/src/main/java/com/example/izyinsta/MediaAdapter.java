@@ -9,6 +9,8 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.view.View;
+import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -47,14 +49,18 @@ public class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.ViewHolder> 
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
+        TextView displayText;
         ImageView imageView;
         ImageView likeIcon;
+        TextView nbOfLikes;
 
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
+            displayText = itemView.findViewById(R.id.descImageView);
             imageView = itemView.findViewById(R.id.imageView);
             likeIcon = itemView.findViewById(R.id.likeImageView);
+            nbOfLikes = itemView.findViewById(R.id.nbLikesImageView);
         }
     }
 
@@ -79,6 +85,10 @@ public class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.ViewHolder> 
                     .fitCenter() // Permet de centrer l'image dans le ImageView
                     .into(holder.imageView);
         }
+
+        // Afficher le nom de l'image et l'utilisateur
+        String description = mediaItem.imageName + " - publié par " + mediaItem.userCreator;
+        holder.displayText.setText(description);
 
         holder.likeIcon.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -138,6 +148,9 @@ public class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.ViewHolder> 
             }
 
         });
+
+        String likes = mediaItem.likes.toString();
+        holder.nbOfLikes.setText(likes);
 
     }
 

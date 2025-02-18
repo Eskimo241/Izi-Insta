@@ -100,6 +100,7 @@ public class Tendency extends AppCompatActivity {
                                 String normalUrl = mediaItemJson.getString("normalUrl");
                                 String tinyUrl = mediaItemJson.getString("tinyUrl");
                                 Integer likes = mediaItemJson.getInt("likes");
+                                String userCreator = mediaItemJson.getString("username");
                                 String date = mediaItemJson.getString("date");
 
                                 // Création de l'objet MediaItem avec les données récupérées
@@ -111,7 +112,7 @@ public class Tendency extends AppCompatActivity {
                                         likes,
                                         null, // likeThisDay (à adapter si nécessaire)
                                         null, // isTrending (à adapter si nécessaire)
-                                        null, // userCreator (à adapter si nécessaire)
+                                        userCreator,
                                         null, // hashtag (à adapter si nécessaire)
                                         date,
                                         null,
