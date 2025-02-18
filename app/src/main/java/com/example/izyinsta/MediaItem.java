@@ -17,13 +17,13 @@ import android.net.Uri;
 
 public class MediaItem {
     private Integer imageId;
-    private String imageName;
+    public String imageName;
     private String normalUrl; //Correspond aux images de taille normal
     private String tinyUrl; //Correspond aux images de petite taille
-    private Integer likes; //Nombre de likes total
+    public Integer likes; //Nombre de likes total
     private Integer likeThisDay; // Nombre de like aujourd'hui
     private Boolean isTrending; // Si l'image ou gif est en tendance (dépend du nombre de like aujourd'hui)
-    private String userCreator; //Celui qui a publié l'image
+    public String userCreator; //Celui qui a publié l'image
     private String hashtag; // Mots-clé associés
     private String date; //Date de publication
     private String type; // Type de média (image ou gif)

@@ -26,7 +26,7 @@
         android:layout_height="61dp"
         android:layout_marginTop="4dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.368"
+        app:layout_constraintHorizontal_bias="0.46"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView"
         app:srcCompat="@drawable/icons8_heart_100_black" />
@@ -49,14 +49,12 @@
         android:id="@+id/nbLikesImageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
         android:text="[likes]"
         android:textColor="#000000"
         android:textSize="25dp"
         app:layout_constraintBottom_toBottomOf="@+id/likeImageView"
         app:layout_constraintStart_toEndOf="@+id/likeImageView"
-        app:layout_constraintTop_toTopOf="@+id/likeImageView"
-        app:layout_constraintVertical_bias="0.518" />
+        app:layout_constraintTop_toTopOf="@+id/likeImageView" />
 
     <ImageView
         android:id="@+id/bannerImageView"
