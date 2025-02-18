@@ -97,15 +97,29 @@ public class AddImage extends AppCompatActivity {
                             );
                             mediaItems.add(mediaItem);
                             mediaAdapter.notifyItemInserted(mediaItems.size() - 1);
-                            uploadUserImage(mediaItem, savedUsername);
+                            uploadUserImage(mediaItem, savedUsername, new UploadCallback() {
+                                @Override
+                                public void onSuccess() {
+                                    // L'image a été téléchargée avec succès.
+                                    // Mise à jour de l'historique :
+                                    loadUserImages(savedUsername); // On recharge l'historique depuis le serveur
+                                    addImgScroller.scrollToPosition(0); // On revient tout en haut du scroller
+                                }
+
+                                @Override
+                                public void onFailure(String errorMessage) {
+                                    Log.e("Upload Error", errorMessage);
+                                }
+                            });
                         }
                     }
                 });
 
-        loadUserImages(savedUsername);
-
         addImage = findViewById(R.id.buttonAddImage);
         addImage.setOnClickListener(v -> imageChooser());
+
+        //On charge une première fois l'historique depuis le serveur
+        loadUserImages(savedUsername);
     }
 
     //Selectionner l'image depuis sa galerie
@@ -140,11 +154,12 @@ public class AddImage extends AppCompatActivity {
 
 
     //---Partie d'envoi vers le serveur :-----------------------------------------------------------
-    private void uploadUserImage(MediaItem mediaItem, String savedUsername) {
+    private void uploadUserImage(MediaItem mediaItem, String savedUsername,  UploadCallback callback) {
 
         //On fait une vérification, mais en vrai si ça fail, c'est qu'on est pas connecté...
         if(savedUsername.equals("")) {
             Log.e("DBG", "uploadImageToServer: No username found in shared preferences");
+            callback.onFailure("No username found"); // Appeler le callback en cas d'erreur
             return;
         }
 
@@ -178,6 +193,7 @@ public class AddImage extends AppCompatActivity {
                 @Override
                 public void onFailure(@NonNull okhttp3.Call call, @NonNull IOException e) {
                     Log.d("fetchPost", "onFailure: "+e.getMessage());
+                    callback.onFailure(e.getMessage()); // Appeler le callback en cas d'échec
                 }
 
                 @Override
@@ -185,15 +201,24 @@ public class AddImage extends AppCompatActivity {
                 public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                     if (response.isSuccessful()) {
                         Log.d("DBG", "onResponse: "+response);
+                        // L'upload a réussi, mais on ne fait rien avec la réponse ici
+                        callback.onSuccess(); // Appeler le callback pour indiquer le succès
+                    } else {
+                        // ... (Gestion des erreurs de réponse du serveur - reste inchangée)
+                        callback.onFailure("Erreur lors de l'upload: " + response.code());
                     }
-
-
                 }
             });
 
         } catch (IOException e) {
             Log.e("DBG", "Erreur lors de l'encodage de l'image : " + e.getMessage());
         }
+    }
+
+    //Permet de vérifier les images ajoutées pour les charger en tant réel juste après l'ajout
+    interface UploadCallback {
+        void onSuccess();
+        void onFailure(String errorMessage);
     }
 
     private String encodeImage(Uri uri, String type) throws IOException {
@@ -266,10 +291,14 @@ public class AddImage extends AppCompatActivity {
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                //-----------On récupère tout les attributs de la table Images-------------------:
+                //mediaId, imageName, tinyUrl, normalUrl, likes, date
                 if (response.isSuccessful()) {
                     assert response.body() != null;
                     final String myResponse = response.body().string();
                     Log.d("DBG", "onResponse: " + myResponse);
+                    //-----------Ici on a les données comme une liste de JSON-------------------:
+                    //[{"mediaId":1,"imageName":...},{"mediaId":2,"imageName":...},...]
 
                     AddImage.this.runOnUiThread(() -> {
                         try {
@@ -279,34 +308,38 @@ public class AddImage extends AppCompatActivity {
                             for (int i = 0; i < mediaItemsJson.length(); i++) {
                                 JSONObject mediaItemJson = mediaItemsJson.getJSONObject(i);
 
-                                String imageName = mediaItemJson.getString("imageName");
-                                String imageUri = mediaItemJson.getString("imageUri"); // URI de l'image
-                                String type = mediaItemJson.getString("type"); // Type de média (image ou gif)
-
                                 Log.d("DBG", "Media: "+mediaItemJson.toString());
+                                //-----------Ici on sépare les données à chaque itération-------------------:
+                                //{"mediaId":1,"imageName":...}
+                                //{"mediaId":2,"imageName":...}
+
+                                Integer mediaId = mediaItemJson.getInt("mediaId");
+                                String imageName = mediaItemJson.getString("imageName");
+                                String normalUrl = mediaItemJson.getString("normalUrl");
+                                String tinyUrl = mediaItemJson.getString("tinyUrl");
+                                Integer likes = mediaItemJson.getInt("likes");
+                                String date = mediaItemJson.getString("date");
 
                                 // Création de l'objet MediaItem avec les données récupérées
                                 MediaItem mediaItem = new MediaItem(
-                                        null, // imageId (à adapter si nécessaire)
+                                        mediaId,
                                         imageName,
-                                        null, // normalUrl (à adapter si nécessaire)
-                                        null, // tinyUrl (à adapter si nécessaire)
-                                        null, // likes (à adapter si nécessaire)
+                                        "https://android.chocolatine-rt.fr/androidServ/addImg/"+normalUrl,
+                                        "https://android.chocolatine-rt.fr/androidServ/addImg/"+tinyUrl,
+                                        likes,
                                         null, // likeThisDay (à adapter si nécessaire)
                                         null, // isTrending (à adapter si nécessaire)
                                         null, // userCreator (à adapter si nécessaire)
                                         null, // hashtag (à adapter si nécessaire)
-                                        null, // date (à adapter si nécessaire)
-                                        type,
-                                        Uri.parse(imageUri) // uri de l'image
+                                        date,
+                                        null,
+                                        null
                                 );
                                 mediaItems.add(mediaItem);
                             }
 
-                            // Mise à jour de l'adaptateur avec les nouvelles images
-                            //mediaItems.clear(); // Effacer les anciennes images
-                            mediaItems.addAll(mediaItems); // Ajouter les nouvelles images
-                            mediaAdapter.notifyDataSetChanged(); // Notifier l'adaptateur des changements
+                            MediaAdapter mediaAdapter = new MediaAdapter(mediaItems);
+                            addImgScroller.setAdapter(mediaAdapter);
 
                         } catch (JSONException e) {
                             e.printStackTrace();
