@@ -200,9 +200,16 @@ public class AddImage extends AppCompatActivity {
                 //Ici pour le coup on a pas besoin de réponse, un peu la flemme de faire qqchose
                 public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                     if (response.isSuccessful()) {
-                        Log.d("DBG", "onResponse: "+response);
+
                         // L'upload a réussi, mais on ne fait rien avec la réponse ici
-                        callback.onSuccess(); // Appeler le callback pour indiquer le succès
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Log.d("DBG", "onResponse: "+response);
+                                callback.onSuccess(); // Appeler le callback pour indiquer le succès
+
+                            }
+                        });
                     } else {
                         // ... (Gestion des erreurs de réponse du serveur - reste inchangée)
                         callback.onFailure("Erreur lors de l'upload: " + response.code());
