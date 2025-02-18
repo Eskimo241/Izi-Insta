@@ -1,5 +1,6 @@
 package com.example.izyinsta;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -15,6 +16,9 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.List;
 
@@ -90,6 +94,7 @@ public class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.ViewHolder> 
         String description = mediaItem.imageName + " - publié par " + mediaItem.userCreator;
         holder.displayText.setText(description);
 
+
         holder.likeIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -136,9 +141,37 @@ public class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.ViewHolder> 
                     @Override
                     public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                         if (response.isSuccessful()) {
+
                             assert response.body() != null;
-                            String responseStr = response.body().string();
-                            Log.d("DBG", "onResponse: "+responseStr);
+                            String myResponse = response.body().string();
+                            Log.d("DBG", "MediaAdapterLikeClicked: "+myResponse);
+
+                            //-----------------On update le nombre de like sur l'image-------------------------------
+
+                            if(holder.likeIcon.getContext() instanceof Activity) {
+                                Activity activity = (Activity) holder.likeIcon.getContext();
+                                //Comme on est une "sous activité", mais qu'on veut faire des trucs de MainThread on utiliser l'activité du contexte
+                                //c'est pas clair même dans ma tête
+                                activity.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        try {
+                                            JSONObject obj = new JSONObject(myResponse);
+                                            String likeCount = obj.getString("likeCount");
+                                            holder.nbOfLikes.setText(likeCount);
+                                        } catch (JSONException e) {
+                                            throw new RuntimeException(e);
+                                        }
+                                    }
+                                });
+                            }
+
+
+
+
+
+
+
                         }
                     }
                 });
@@ -148,7 +181,6 @@ public class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.ViewHolder> 
             }
 
         });
-
         String likes = mediaItem.likes.toString();
         holder.nbOfLikes.setText(likes);
 
