@@ -1,5 +1,8 @@
 package com.example.izyinsta;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,8 +16,21 @@ import com.bumptech.glide.Glide;
 
 import java.util.List;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLSession;
+
+import okhttp3.Call;
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+import okhttp3.Callback;
+import java.io.IOException;
+
 public class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.ViewHolder> {
     private List<MediaItem> mediaItems;
+    String servUrl = "https://android.chocolatine-rt.fr/androidServ/";
 
     //Constructeur
     public MediaAdapter(List<MediaItem> mediaItems) {
@@ -67,8 +83,60 @@ public class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.ViewHolder> 
         holder.likeIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 Log.d("DBG", "MediaId : "+mediaItem.getImageId());
+                OkHttpClient client = new OkHttpClient.Builder()
+                        .hostnameVerifier(new HostnameVerifier() {
+                            @Override
+                            public boolean verify(String hostname, SSLSession session) {
+                                return hostname.equals("android.chocolatine-rt.fr") || hostname.endsWith(".eu.ngrok.io");
+                            }
+                        })
+                        .build();
+
+                SharedPreferences preferences = holder.likeIcon.getContext().getSharedPreferences("com.example.izyinsta.PREFERENCE_FILE_KEY", Context.MODE_PRIVATE);
+                String savedUsername = preferences.getString("username", "");
+                if (savedUsername.equals("")) {
+                    Log.d("DBG", "No username saved");
+                    Intent intent = new Intent(holder.likeIcon.getContext(), Home.class);
+                    intent.putExtra("error_message", "Une erreur s'est produite, veuillez vous reconnecter");
+
+                    holder.likeIcon.getContext().startActivity(intent);
+                    return;
+                }
+
+                Log.d("DBG", "savedUsername: "+savedUsername);
+
+
+                RequestBody body = new FormBody.Builder()
+                        .add("username", savedUsername)
+                        .add("mediaId", mediaItem.getImageId().toString())
+                        .build();
+
+                Request request = new Request.Builder()
+                        .url(servUrl + "like.php")
+                        .post(body)
+                        .build();
+
+                client.newCall(request).enqueue(new okhttp3.Callback() {
+                    @Override
+                    public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                        Log.d("DBG", "onFailure: "+e.getMessage());
+                    }
+                    @Override
+                    public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                        if (response.isSuccessful()) {
+                            assert response.body() != null;
+                            String responseStr = response.body().string();
+                            Log.d("DBG", "onResponse: "+responseStr);
+                        }
+                    }
+                });
+
+
+
             }
+
         });
 
     }
