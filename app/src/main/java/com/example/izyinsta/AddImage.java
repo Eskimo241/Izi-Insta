@@ -17,6 +17,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.provider.OpenableColumns;
+import android.text.InputFilter;
 import android.text.InputType;
 import android.util.Base64;
 import android.util.Log;
@@ -89,38 +90,66 @@ public class AddImage extends AppCompatActivity {
                             String type = getMediaType(selectedImageUri); // Récupérer l'extension du fichier
                             String imagePath = getFileNameFromUri(selectedImageUri); // Récupérer le nom du fichier d'origine pour en faire notre URL
 
-                            String imageName = currentImageName; // Récupérer le nom du fichier saisi par l'utilisateur
+                            // 1) Création du pop-up
+                            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                            builder.setTitle("Nom de l'image");
 
-                            MediaItem mediaItem = new MediaItem(
-                                    null, // imageId (à adapter)
-                                    imageName,
-                                    imagePath, //normalUrl
-                                    null, // tinyUrl (à adapter)
-                                    null, // likes (à adapter)
-                                    null, // likeThisDay (à adapter)
-                                    null, // isTrending (à adapter)
-                                    null, // userCreator (à adapter)
-                                    null, // hashtag (à adapter)
-                                    null, // date (à adapter)
-                                    type,
-                                    selectedImageUri // uri
-                            );
-                            mediaItems.add(mediaItem);
-                            mediaAdapter.notifyItemInserted(mediaItems.size() - 1);
-                            uploadUserImage(mediaItem, savedUsername, new UploadCallback() {
-                                @Override
-                                public void onSuccess() {
-                                    // L'image a été téléchargée avec succès.
-                                    // Mise à jour de l'historique :
-                                    loadUserImages(savedUsername); // On recharge l'historique depuis le serveur
-                                    addImgScroller.scrollToPosition(0); // On revient tout en haut du scroller
+                            // 2) Ajout d'un EditText pour pouvoir rentrer le nom de l'image
+                            final EditText input = new EditText(this);
+                            input.setInputType(InputType.TYPE_CLASS_TEXT);
+                            input.setFilters(new InputFilter[] {new InputFilter.LengthFilter(25)}); // Limite à 25 caractères
+                            builder.setView(input);
+
+                            // 3) Boutons de validation
+                            builder.setPositiveButton("OK", (dialog, which) -> {
+                                currentImageName = input.getText().toString();
+
+                                if (currentImageName.isEmpty()) {
+                                    // Afficher un message d'erreur à l'utilisateur
+                                    Toast.makeText(this, "Veuillez saisir un nom pour l'image", Toast.LENGTH_SHORT).show();
+                                    return;
                                 }
 
-                                @Override
-                                public void onFailure(String errorMessage) {
-                                    Log.e("Upload Error", errorMessage);
-                                }
+                                MediaItem mediaItem = new MediaItem(
+                                        null, // imageId (à adapter)
+                                        currentImageName, //imageName saisi par l'utilisateur
+                                        imagePath, //normalUrl
+                                        null, // tinyUrl (à adapter)
+                                        null, // likes (à adapter)
+                                        null, // likeThisDay (à adapter)
+                                        null, // isTrending (à adapter)
+                                        null, // userCreator (à adapter)
+                                        null, // hashtag (à adapter)
+                                        null, // date (à adapter)
+                                        type,
+                                        selectedImageUri // uri
+                                );
+                                mediaItems.add(mediaItem);
+                                mediaAdapter.notifyItemInserted(mediaItems.size() - 1);
+                                uploadUserImage(mediaItem, savedUsername, new UploadCallback() {
+                                    @Override
+                                    public void onSuccess() {
+                                        // L'image a été téléchargée avec succès.
+                                        // Mise à jour de l'historique :
+                                        loadUserImages(savedUsername); // On recharge l'historique depuis le serveur
+                                        addImgScroller.scrollToPosition(0); // On revient tout en haut du scroller
+                                    }
+
+                                    @Override
+                                    public void onFailure(String errorMessage) {
+                                        Log.e("Upload Error", errorMessage);
+                                    }
+                                });
+
+                                dialog.dismiss(); // Fermer le dialogue après avoir validé
                             });
+
+                            // 4) Boutons d'annulation
+                            builder.setNegativeButton("Annuler", (dialog, which) -> {
+                                dialog.cancel();
+                            });
+
+                            builder.show();
                         }
                     }
                 });
@@ -157,29 +186,11 @@ public class AddImage extends AppCompatActivity {
 
     //Selectionner l'image depuis sa galerie
     public void imageChooser() {
-        // Création du pop-up
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Nom de l'image");
+        Intent i = new Intent();
+        i.setType("image/*");
+        i.setAction(Intent.ACTION_GET_CONTENT);
 
-        // Ajout d'un EditText pour pouvoir rentrer le nom de l'image
-        final EditText input = new EditText(this);
-        input.setInputType(InputType.TYPE_CLASS_TEXT);
-        builder.setView(input);
-
-        // Boutons de validation et d'annulation
-        builder.setPositiveButton("OK", (dialog, which) -> {
-            currentImageName  = input.getText().toString();
-
-            // Lancement de l'activité de sélection d'image avec le nom
-            Intent i = new Intent();
-            i.setType("image/*");
-            i.setAction(Intent.ACTION_GET_CONTENT);
-
-            launchSomeActivity.launch(i);
-        });
-        builder.setNegativeButton("Annuler", (dialog, which) -> dialog.cancel());
-
-        builder.show();
+        launchSomeActivity.launch(i);
     }
 
     // Récupérer l'extension du fichier
