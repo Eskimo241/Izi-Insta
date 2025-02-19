@@ -324,7 +324,7 @@ public class AddImage extends AppCompatActivity {
                                 String imageName = mediaItemJson.getString("imageName");
                                 String normalUrl = mediaItemJson.getString("normalUrl");
                                 String tinyUrl = mediaItemJson.getString("tinyUrl");
-                                Integer likes = mediaItemJson.getInt("likes");
+                                Integer likes = mediaItemJson.getInt("likeCount");
                                 String userCreator = mediaItemJson.getString("username");
                                 String date = mediaItemJson.getString("date");
 
