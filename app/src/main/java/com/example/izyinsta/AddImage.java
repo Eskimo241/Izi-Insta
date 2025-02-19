@@ -4,15 +4,20 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
+import android.Manifest;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.provider.OpenableColumns;
+import android.text.InputType;
 import android.util.Base64;
 import android.util.Log;
 import android.widget.Button;
@@ -22,6 +27,8 @@ import android.net.Uri;
 import android.view.View;
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -30,8 +37,6 @@ import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
-import java.util.Date;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,6 +58,9 @@ public class AddImage extends AppCompatActivity {
     private MediaAdapter mediaAdapter;
     private RecyclerView addImgScroller;
     private Button addImage;
+    private String currentImageName; // Variable pour stocker le nom de l'image
+    private static final int REQUEST_READ_EXTERNAL_STORAGE = 1; // Définir une constante pour le code de requête (vérification des permissions)
+
     String servUrl = "https://android.chocolatine-rt.fr/androidServ/";
 
 
@@ -79,12 +87,14 @@ public class AddImage extends AppCompatActivity {
 
                             Uri selectedImageUri = data.getData(); // Récupérer l'URI du fichier
                             String type = getMediaType(selectedImageUri); // Récupérer l'extension du fichier
-                            String fileName = getFileNameFromUri(selectedImageUri); // Récupérer le nom du fichier d'origine
+                            String imagePath = getFileNameFromUri(selectedImageUri); // Récupérer le nom du fichier d'origine pour en faire notre URL
+
+                            String imageName = currentImageName; // Récupérer le nom du fichier saisi par l'utilisateur
 
                             MediaItem mediaItem = new MediaItem(
                                     null, // imageId (à adapter)
-                                    fileName, // imageName (à adapter)
-                                    null, // normalUrl (à adapter)
+                                    imageName,
+                                    imagePath, //normalUrl
                                     null, // tinyUrl (à adapter)
                                     null, // likes (à adapter)
                                     null, // likeThisDay (à adapter)
@@ -92,7 +102,7 @@ public class AddImage extends AppCompatActivity {
                                     null, // userCreator (à adapter)
                                     null, // hashtag (à adapter)
                                     null, // date (à adapter)
-                                    type, // type
+                                    type,
                                     selectedImageUri // uri
                             );
                             mediaItems.add(mediaItem);
@@ -115,6 +125,11 @@ public class AddImage extends AppCompatActivity {
                     }
                 });
 
+        // Demande de permission READ_EXTERNAL_STORAGE
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_MEDIA_IMAGES}, REQUEST_READ_EXTERNAL_STORAGE);
+        }
+
         addImage = findViewById(R.id.buttonAddImage);
         addImage.setOnClickListener(v -> imageChooser());
 
@@ -122,12 +137,49 @@ public class AddImage extends AppCompatActivity {
         loadUserImages(savedUsername);
     }
 
+    // Gestion de la réponse à la demande de permission
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == REQUEST_READ_EXTERNAL_STORAGE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission accordée, on peut accéder à la galerie
+                Log.d("Permission", "Permission accordée");
+            } else {
+                // Permission refusée, afficher un message à l'utilisateur
+                Log.d("Permission", "Permission refusée");
+                Toast.makeText(this, "Permission d'accès à la galerie refusée", Toast.LENGTH_SHORT).show();
+                // Eventuellement, désactiver le bouton d'ajout d'image ou afficher un message expliquant pourquoi la permission est nécessaire.
+            }
+        }
+    }
+
     //Selectionner l'image depuis sa galerie
     public void imageChooser() {
-        Intent i = new Intent();
-        i.setType("image/*");
-        i.setAction(Intent.ACTION_GET_CONTENT);
-        launchSomeActivity.launch(i);
+        // Création du pop-up
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Nom de l'image");
+
+        // Ajout d'un EditText pour pouvoir rentrer le nom de l'image
+        final EditText input = new EditText(this);
+        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        builder.setView(input);
+
+        // Boutons de validation et d'annulation
+        builder.setPositiveButton("OK", (dialog, which) -> {
+            currentImageName  = input.getText().toString();
+
+            // Lancement de l'activité de sélection d'image avec le nom
+            Intent i = new Intent();
+            i.setType("image/*");
+            i.setAction(Intent.ACTION_GET_CONTENT);
+
+            launchSomeActivity.launch(i);
+        });
+        builder.setNegativeButton("Annuler", (dialog, which) -> dialog.cancel());
+
+        builder.show();
     }
 
     // Récupérer l'extension du fichier
@@ -178,7 +230,8 @@ public class AddImage extends AppCompatActivity {
             RequestBody body = new FormBody.Builder()
                     .add("image", encodedImage)
                     .add("username", savedUsername)
-                    .add("imageName", mediaItem.getImageName()) // Envoyer le nom du fichier au serveur
+                    .add("imageName", mediaItem.getImageName()) // Envoyer le nom du fichier de l'utilisateur au serveur
+                    .add("imagePath", mediaItem.getNormalUrl()) // Envoyer le nom du fichier d'origine au serveur
                     .build();
 
             //On envoie la requête
