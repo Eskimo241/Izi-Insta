@@ -45,5 +45,6 @@ dependencies {
     implementation ("com.squareup.retrofit2:converter-gson:2.9.0") //Idem
     implementation ("com.android.volley:volley:1.2.1") //Pour les requêtes HTTP vers le serveur Web
     implementation ("com.github.bumptech.glide:glide:4.15.1") // Glide pour le chargement de l'image (Media Item) avec l'URI dans l'adapter
+    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
     annotationProcessor ("com.github.bumptech.glide:compiler:4.15.1") // Idem
 }

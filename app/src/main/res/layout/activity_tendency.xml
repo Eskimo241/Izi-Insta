@@ -101,6 +101,16 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@drawable/icons8_account_96_default" />
 
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefreshLayout"
+        android:layout_width="416dp"
+        android:layout_height="602dp"
+        app:layout_constraintBottom_toBottomOf="@+id/addImageIcon"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" >
+
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/tendencyImgScroller"
         android:layout_width="416dp"
@@ -110,5 +120,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0" />
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -4,11 +4,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -33,6 +35,8 @@ public class Tendency extends AppCompatActivity {
     //RecyclerView recyclerView = findViewById(R.id.profilImgScroller);
     //recyclerView.setLayoutManager(new LinearLayoutManager(this));
     String servUrl = "https://android.chocolatine-rt.fr/androidServ/";
+    private SwipeRefreshLayout swipeRefreshLayout;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,9 +45,23 @@ public class Tendency extends AppCompatActivity {
 
         //---Images et Gifs---------------------------------------------------------------------
 
+
+
+
+
+
+
+        swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
+        swipeRefreshLayout.setOnRefreshListener(this::fetch);
+        fetch();
+
+
+
+    }
+
+    public void fetch() {
         RecyclerView recyclerView = findViewById(R.id.tendencyImgScroller);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
         OkHttpClient client = new OkHttpClient.Builder()
                 .hostnameVerifier(new HostnameVerifier() {
                     @Override
@@ -52,7 +70,6 @@ public class Tendency extends AppCompatActivity {
                     }
                 })
                 .build();
-
         //On fait une requête, on a besoin que du nom d'utilisateur pour le serveur
         RequestBody body = new FormBody.Builder()
                 .build();
@@ -69,6 +86,8 @@ public class Tendency extends AppCompatActivity {
             @Override
             public void onFailure(@NonNull okhttp3.Call call, @NonNull IOException e) {
                 Log.d("DBG", "onFailure: "+e.getMessage());
+                Toast.makeText(Tendency.this, "Erreur de connexion", Toast.LENGTH_SHORT).show();
+                swipeRefreshLayout.setRefreshing(false);
             }
 
             @Override
@@ -89,7 +108,7 @@ public class Tendency extends AppCompatActivity {
                             for (int i = 0; i < mediaItemsJson.length(); i++) {
                                 JSONObject mediaItemJson = mediaItemsJson.getJSONObject(i);
 
-                                Log.d("DBG", "Media: "+mediaItemJson.toString());
+                                //Log.d("DBG", "Media: "+mediaItemJson.toString());
                                 //-----------Ici on sépare les données à chaque itération-------------------:
                                 //{"mediaId":1,"imageName":...}
                                 //{"mediaId":2,"imageName":...}
@@ -122,6 +141,7 @@ public class Tendency extends AppCompatActivity {
 
                             MediaAdapter mediaAdapter = new MediaAdapter(mediaItems);
                             recyclerView.setAdapter(mediaAdapter);
+                            swipeRefreshLayout.setRefreshing(false);
 
                         } catch (JSONException e) {
                             throw new RuntimeException(e);
@@ -133,7 +153,6 @@ public class Tendency extends AppCompatActivity {
             }
         });
     }
-
     //Pour tester l'envoi vers le serveur avec la classe devSend (remplacé par AddImage)
     public void goSend(View v) {
         Intent intent = new Intent(this, devSend.class);
