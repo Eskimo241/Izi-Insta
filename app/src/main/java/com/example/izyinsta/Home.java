@@ -23,6 +23,8 @@ import okhttp3.Response;
 import org.json.JSONObject;
 import org.json.JSONException;
 import android.content.Context;
+import android.widget.Toast;
+
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLSession;
 
@@ -107,7 +109,9 @@ public class Home extends AppCompatActivity {
         client.newCall(request).enqueue(new okhttp3.Callback() {
             @Override
             public void onFailure(@NonNull okhttp3.Call call, @NonNull IOException e) {
-                Log.d("fetchPost", "onFailure: "+e.getMessage());
+                Home.this.runOnUiThread(() -> {
+                    Toast.makeText(getApplicationContext(), "Connection au serveur impossible", Toast.LENGTH_SHORT).show();
+                });
             }
 
             @SuppressLint("SetTextI18n")
@@ -147,8 +151,12 @@ public class Home extends AppCompatActivity {
                     });
                 }
                 else {
+                    Home.this.runOnUiThread(() -> {
+                        Toast.makeText(getApplicationContext(), "Connection au serveur impossible", Toast.LENGTH_SHORT).show();
+                        dbgText.setText("Connection au serveur impossible");
+                    });
                     Log.d("fetchPost", "onResponse: "+response);
-                    dbgText.setText("Connection au serveur impossible");
+
                 }
 
             }
