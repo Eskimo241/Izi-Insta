@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -94,6 +95,7 @@ public class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.ViewHolder> 
         String description = mediaItem.imageName + " - publié par " + mediaItem.userCreator;
         holder.displayText.setText(description);
 
+        updateLikeIcon(holder.likeIcon, mediaItem.likes > 0); // Initialisation de l'icône
 
         holder.likeIcon.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -157,8 +159,11 @@ public class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.ViewHolder> 
                                     public void run() {
                                         try {
                                             JSONObject obj = new JSONObject(myResponse);
-                                            String likeCount = obj.getString("likeCount");
-                                            holder.nbOfLikes.setText(likeCount);
+                                            int likeCount = obj.getInt("likeCount"); // Récupérer le nombre de likes
+                                            mediaItem.likes = likeCount; // Mettre à jour le nombre de likes dans MediaItem
+                                            holder.nbOfLikes.setText(String.valueOf(likeCount)); // Mettre à jour le TextView
+                                            updateLikeIcon(holder.likeIcon, likeCount > 0); // Mettre à jour l'icône
+                                            updateLikeColor(holder.nbOfLikes, mediaItem.likes > 0); // Mettre à jour le texte
                                         } catch (JSONException e) {
                                             throw new RuntimeException(e);
                                         }
@@ -183,7 +188,17 @@ public class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.ViewHolder> 
         });
         String likes = mediaItem.likes.toString();
         holder.nbOfLikes.setText(likes);
+        updateLikeColor(holder.nbOfLikes, mediaItem.likes > 0); // Initialisation de la couleur
 
+    }
+
+    private void updateLikeIcon(ImageView likeIcon, boolean hasLikes) {
+        likeIcon.setImageResource(hasLikes ? R.drawable.icons8_heart_100_default : R.drawable.icons8_heart_100_black);
+    }
+
+    private void updateLikeColor(TextView nbOfLikes, boolean hasLikes) {
+        int color = hasLikes ? R.color.liked_color : R.color.black;
+        nbOfLikes.setTextColor(ContextCompat.getColor(nbOfLikes.getContext(), color));
     }
 
     //Pour savoir combien d'éléments on doit afficher
@@ -191,9 +206,4 @@ public class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.ViewHolder> 
     public int getItemCount() {
         return mediaItems.size();
     }
-
-
-
-
-
 }
