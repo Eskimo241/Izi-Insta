@@ -142,6 +142,7 @@ public class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.ViewHolder> 
                     }
                     @Override
                     public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                        Log.d("DBG", "onResponse: "+response);
                         if (response.isSuccessful()) {
 
                             assert response.body() != null;
@@ -160,10 +161,11 @@ public class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.ViewHolder> 
                                         try {
                                             JSONObject obj = new JSONObject(myResponse);
                                             int likeCount = obj.getInt("likeCount"); // Récupérer le nombre de likes
+                                            boolean hasLiked = obj.getBoolean("hasLiked"); // Récupérer si l'utilisateur a liké (pour l'icône)
                                             mediaItem.likes = likeCount; // Mettre à jour le nombre de likes dans MediaItem
                                             holder.nbOfLikes.setText(String.valueOf(likeCount)); // Mettre à jour le TextView
-                                            updateLikeIcon(holder.likeIcon, likeCount > 0); // Mettre à jour l'icône
-                                            updateLikeColor(holder.nbOfLikes, mediaItem.likes > 0); // Mettre à jour le texte
+                                            updateLikeIcon(holder.likeIcon, hasLiked); // Mettre à jour l'icône
+                                            updateLikeColor(holder.nbOfLikes, hasLiked); // Mettre à jour le texte
                                         } catch (JSONException e) {
                                             throw new RuntimeException(e);
                                         }
