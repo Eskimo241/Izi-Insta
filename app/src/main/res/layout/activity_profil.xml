@@ -109,23 +109,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/titleProfil2"
-        android:layout_width="812dp"
-        android:layout_height="72dp"
-        android:layout_marginTop="20dp"
-        android:background="#FFBD59"
-        android:fontFamily="@font/poppins_medium"
-        android:gravity="center"
-        android:onClick="profilSelect"
-        android:text="Ajouts Récents"
-        android:textColor="#FFFFFF"
-        android:textSize="40dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.501"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buttonLogOff" />
-
     <ImageView
         android:id="@+id/profilPicture"
         android:layout_width="128dp"
@@ -169,7 +152,7 @@
         app:layout_constraintTop_toBottomOf="@+id/displayName" />
 
     <TextView
-        android:id="@+id/displayEmail"
+        android:id="@+id/displayLikes"
         android:layout_width="262dp"
         android:layout_height="29dp"
         android:layout_marginStart="4dp"
@@ -191,15 +174,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/box" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/profilImgScroller"
-        android:layout_width="414dp"
-        android:layout_height="268dp"
-        app:layout_constraintBottom_toTopOf="@+id/addImageIcon"
+    <ImageView
+        android:id="@+id/imageView3"
+        android:layout_width="92dp"
+        android:layout_height="91dp"
+        app:layout_constraintBottom_toBottomOf="@+id/box"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/titleProfil2"
-        app:layout_constraintVertical_bias="0.75" />
+        app:layout_constraintHorizontal_bias="0.866"
+        app:layout_constraintStart_toEndOf="@+id/profilPicture"
+        app:layout_constraintTop_toTopOf="@+id/box"
+        app:layout_constraintVertical_bias="0.968"
+        app:srcCompat="@drawable/icons8__toile_100_default" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
