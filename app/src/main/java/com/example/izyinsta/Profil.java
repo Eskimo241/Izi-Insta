@@ -47,6 +47,7 @@ public class Profil extends AppCompatActivity {
     ImageView profilPicture;
     TextView displayName;
     TextView displayLikes;
+    TextView displayJoeStars;
     ActivityResultLauncher<Intent> launchSomeActivity;
     String servUrl = "https://android.chocolatine-rt.fr/androidServ/";
 
@@ -59,6 +60,7 @@ public class Profil extends AppCompatActivity {
 
         Button buttonDisconnect = findViewById(R.id.buttonLogOff);
         displayLikes = findViewById(R.id.displayLikes);
+        displayJoeStars = findViewById(R.id.displayJoeStars);
 
         //-------------------------------------------------------------------------------------------
         //---Select Profil Picture / Send to Server / Load from Server-------------------------------------------
@@ -316,8 +318,12 @@ public class Profil extends AppCompatActivity {
                     try {
                         JSONObject jsonResponse = new JSONObject(responseStr);
                         int totalLikes = jsonResponse.getInt("totalLikes");
+                        int level = calculateLevel(totalLikes); // Calcul du niveau
 
-                        runOnUiThread(() -> displayLikes.setText(String.valueOf(totalLikes) + " likes"));
+                        runOnUiThread(() -> {
+                            displayLikes.setText(String.valueOf(totalLikes)); // Affichage du nombre de likes
+                            displayJoeStars.setText(String.valueOf(level)); // Affichage du niveau
+                        });
 
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -329,6 +335,30 @@ public class Profil extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private int calculateLevel(int totalLikes) {
+        if (totalLikes < 10) {
+            return 1;
+        } else if (totalLikes < 50) {
+            return 2;
+        } else if (totalLikes < 150) {
+            return 3;
+        } else if (totalLikes < 300) {
+            return 4;
+        } else if (totalLikes < 500) {
+            return 5;
+        } else if (totalLikes < 1000) {
+            return 6;
+        } else if (totalLikes < 2000) {
+            return 7;
+        } else if (totalLikes < 5000) {
+            return 8;
+        } else if (totalLikes <= 10000) {
+            return 9;
+        } else {
+            return 9;
+        }
     }
 
     //----------------------------------------------------------------------------------------------

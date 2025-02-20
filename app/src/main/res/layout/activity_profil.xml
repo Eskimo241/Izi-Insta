@@ -186,4 +186,17 @@
         app:layout_constraintVertical_bias="0.968"
         app:srcCompat="@drawable/icons8__toile_100_default" />
 
+    <TextView
+        android:id="@+id/displayJoeStars"
+        android:layout_width="82dp"
+        android:layout_height="79dp"
+        android:gravity="center"
+        android:text="1"
+        android:textColor="#FFD700"
+        android:textSize="30sp"
+        app:layout_constraintBottom_toBottomOf="@+id/imageView3"
+        app:layout_constraintEnd_toEndOf="@+id/imageView3"
+        app:layout_constraintStart_toStartOf="@+id/imageView3"
+        app:layout_constraintTop_toTopOf="@+id/imageView3" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
