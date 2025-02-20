@@ -46,6 +46,8 @@ public class Profil extends AppCompatActivity {
 
     ImageView profilPicture;
     TextView displayName;
+    TextView displayLikes;
+    TextView displayJoeStars;
     ActivityResultLauncher<Intent> launchSomeActivity;
     String servUrl = "https://android.chocolatine-rt.fr/androidServ/";
 
@@ -57,6 +59,8 @@ public class Profil extends AppCompatActivity {
 
 
         Button buttonDisconnect = findViewById(R.id.buttonLogOff);
+        displayLikes = findViewById(R.id.displayLikes);
+        displayJoeStars = findViewById(R.id.displayJoeStars);
 
         //-------------------------------------------------------------------------------------------
         //---Select Profil Picture / Send to Server / Load from Server-------------------------------------------
@@ -75,6 +79,9 @@ public class Profil extends AppCompatActivity {
             return;
         }
         displayName.setText(savedUsername);
+
+        // Requête pour récupérer le nombre total de likes (Dès le début de l'activité)
+        getAndDisplayTotalLikes();
 
 
         launchSomeActivity = registerForActivityResult(
@@ -264,6 +271,94 @@ public class Profil extends AppCompatActivity {
             }
         });
 
+    }
+    //---JoeStars-----------------------------------------------------------------------------------
+    private void getAndDisplayTotalLikes() {
+        SharedPreferences preferences = getSharedPreferences("com.example.izyinsta.PREFERENCE_FILE_KEY", Context.MODE_PRIVATE);
+        String username = preferences.getString("username", "");
+
+        if (username.isEmpty()) {
+            Log.e("DBG", "No username found in shared preferences");
+            return;
+        }
+
+        OkHttpClient client = new OkHttpClient.Builder()
+                .hostnameVerifier(new HostnameVerifier() {
+                    @Override
+                    public boolean verify(String hostname, SSLSession session) {
+                        return hostname.equals("android.chocolatine-rt.fr") || hostname.endsWith(".eu.ngrok.io");
+                    }
+                })
+                .build();
+
+        RequestBody body = new FormBody.Builder()
+                .add("username", username)
+                .build();
+
+        Request request = new Request.Builder()
+                .url(servUrl + "get_user_total_likes.php")
+                .post(body)
+                .build();
+
+        client.newCall(request).enqueue(new okhttp3.Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                Log.d("DBG", "onFailure (total likes): " + e.getMessage());
+                // Gérer l'erreur, par exemple afficher un message à l'utilisateur
+                runOnUiThread(() -> displayLikes.setText("Erreur de chargement"));
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    assert response.body() != null;
+                    String responseStr = response.body().string();
+                    Log.d("DBG", "Total Likes Response: " + responseStr);
+
+                    try {
+                        JSONObject jsonResponse = new JSONObject(responseStr);
+                        int totalLikes = jsonResponse.getInt("totalLikes");
+                        int level = calculateLevel(totalLikes); // Calcul du niveau
+
+                        runOnUiThread(() -> {
+                            displayLikes.setText(String.valueOf(totalLikes)); // Affichage du nombre de likes
+                            displayJoeStars.setText(String.valueOf(level)); // Affichage du niveau
+                        });
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        runOnUiThread(() -> displayLikes.setText("Erreur de données"));
+                    }
+                } else {
+                    Log.d("DBG", "onResponse (total likes): " + response.toString());
+                    runOnUiThread(() -> displayLikes.setText("Erreur serveur"));
+                }
+            }
+        });
+    }
+
+    private int calculateLevel(int totalLikes) {
+        if (totalLikes < 10) {
+            return 1;
+        } else if (totalLikes < 50) {
+            return 2;
+        } else if (totalLikes < 150) {
+            return 3;
+        } else if (totalLikes < 300) {
+            return 4;
+        } else if (totalLikes < 500) {
+            return 5;
+        } else if (totalLikes < 1000) {
+            return 6;
+        } else if (totalLikes < 2000) {
+            return 7;
+        } else if (totalLikes < 5000) {
+            return 8;
+        } else if (totalLikes <= 10000) {
+            return 9;
+        } else {
+            return 9;
+        }
     }
 
     //----------------------------------------------------------------------------------------------
