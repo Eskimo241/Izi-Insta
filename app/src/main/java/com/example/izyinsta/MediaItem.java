@@ -27,11 +27,12 @@ public class MediaItem {
     private String hashtag; // Mots-clé associés
     private String date; //Date de publication
     private String type; // Type de média (image ou gif)
+    private Integer hasLiked; // Si l'utilisateur a déjà liké l'image
     private Uri uri;
 
     //---Constructeur, getters et setters-----------------------------------------------------
 
-    public MediaItem (Integer imageId,String imageName,String normalUrl,String tinyUrl,Integer likes,Integer likeThisDay,Boolean isTrending,String userCreator,String hashtag,String date,String type,Uri uri) {
+    public MediaItem (Integer imageId,String imageName,String normalUrl,String tinyUrl,Integer likes,Integer likeThisDay,Boolean isTrending,String userCreator,String hashtag,String date,String type,Integer hasLiked,Uri uri) {
         this.imageId = imageId;
         this.imageName = imageName;
         this.normalUrl = normalUrl;
@@ -43,7 +44,9 @@ public class MediaItem {
         this.hashtag = hashtag;
         this.date = date;
         this.type = type;
+        this.hasLiked = hasLiked;
         this.uri = uri;
+
     }
 
     public Integer getImageId() {
@@ -77,6 +80,7 @@ public class MediaItem {
     public Integer getLikes() {
         return likes;
     }
+    public Integer getHasLiked() {return hasLiked; }
     public void setLikes(Integer likes) {
         this.likes = likes;
     }

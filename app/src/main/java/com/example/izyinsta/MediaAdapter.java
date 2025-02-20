@@ -95,7 +95,7 @@ public class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.ViewHolder> 
         String description = mediaItem.imageName + " - publié par " + mediaItem.userCreator;
         holder.displayText.setText(description);
 
-        updateLikeIcon(holder.likeIcon, mediaItem.likes > 0); // Initialisation de l'icône
+        updateLikeIcon(holder.likeIcon, mediaItem.getHasLiked()>0); // Initialisation de l'icône
 
         holder.likeIcon.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -190,7 +190,7 @@ public class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.ViewHolder> 
         });
         String likes = mediaItem.likes.toString();
         holder.nbOfLikes.setText(likes);
-        updateLikeColor(holder.nbOfLikes, mediaItem.likes > 0); // Initialisation de la couleur
+        updateLikeColor(holder.nbOfLikes, mediaItem.getHasLiked() > 0); // Initialisation de la couleur
 
     }
 

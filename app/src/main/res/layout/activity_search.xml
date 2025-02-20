@@ -115,6 +115,8 @@
         android:layout_height="59dp"
         android:layout_marginTop="8dp"
         android:background="#FFFFFF"
+        android:iconifiedByDefault="false"
+        android:queryHint="Rechercher une image"
         app:layout_constraintBottom_toTopOf="@+id/searchImgScroller"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

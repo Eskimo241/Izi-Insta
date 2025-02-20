@@ -122,6 +122,7 @@ public class AddImage extends AppCompatActivity {
                                         null, // hashtag (à adapter)
                                         null, // date (à adapter)
                                         type,
+                                        0,
                                         selectedImageUri // uri
                                 );
                                 mediaItems.add(mediaItem);
@@ -391,6 +392,7 @@ public class AddImage extends AppCompatActivity {
                                 Integer likes = mediaItemJson.getInt("likeCount");
                                 String userCreator = mediaItemJson.getString("username");
                                 String date = mediaItemJson.getString("date");
+                                Integer hasLiked = mediaItemJson.getInt("hasLiked");
 
                                 // Création de l'objet MediaItem avec les données récupérées
                                 MediaItem mediaItem = new MediaItem(
@@ -405,6 +407,7 @@ public class AddImage extends AppCompatActivity {
                                         null, // hashtag (à adapter si nécessaire)
                                         date,
                                         null,
+                                        hasLiked,
                                         null
                                 );
                                 mediaItems.add(mediaItem);

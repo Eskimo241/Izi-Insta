@@ -62,6 +62,7 @@ public class Tendency extends AppCompatActivity {
     public void fetch() {
         RecyclerView recyclerView = findViewById(R.id.tendencyImgScroller);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        String username = getSharedPreferences("user", MODE_PRIVATE).getString("username", "");
         OkHttpClient client = new OkHttpClient.Builder()
                 .hostnameVerifier(new HostnameVerifier() {
                     @Override
@@ -72,6 +73,7 @@ public class Tendency extends AppCompatActivity {
                 .build();
         //On fait une requête, on a besoin que du nom d'utilisateur pour le serveur
         RequestBody body = new FormBody.Builder()
+                .add("username", username )
                 .build();
 
         Request request = new Request.Builder()
@@ -120,6 +122,7 @@ public class Tendency extends AppCompatActivity {
                                 Integer likes = mediaItemJson.getInt("likeCount");
                                 String userCreator = mediaItemJson.getString("username");
                                 String date = mediaItemJson.getString("date");
+                                Integer hasLiked = mediaItemJson.getInt("hasLiked");
 
                                 // Création de l'objet MediaItem avec les données récupérées
                                 MediaItem mediaItem = new MediaItem(
@@ -134,6 +137,7 @@ public class Tendency extends AppCompatActivity {
                                         null, // hashtag (à adapter si nécessaire)
                                         date,
                                         null,
+                                        hasLiked,
                                         null
                                 );
                                 mediaItems.add(mediaItem);
