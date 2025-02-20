@@ -59,7 +59,7 @@ public class Likes extends AppCompatActivity {
                 .build();
 
         Request request = new Request.Builder()
-                .url(servUrl + "tendency.php")
+                .url(servUrl + "likePage.php")
                 .post(body)
                 .build();
 
