@@ -5,10 +5,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.SearchView;
 import android.widget.Toast;
 
@@ -35,31 +42,57 @@ public class Search extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 
-        SearchView searchView = findViewById(R.id.searchBar);
-        searchView.setIconifiedByDefault(false); // Ensure the search view is expanded by default
-        searchView.setFocusable(true);
-        searchView.setIconified(false);
-        //searchView.requestFocusFromTouch();
+        fetch("");
 
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+
+        EditText searchEditText = findViewById(R.id.searchEditText);
+        searchEditText.setFocusableInTouchMode(true);
+        searchEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
-            public boolean onQueryTextSubmit(String query) {
-                Log.d("DBG", "onQueryTextSubmit: "+query);
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                Log.d("DBG", "onQueryTextChange: "+newText);
-                return false;
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.showSoftInput(searchEditText, InputMethodManager.SHOW_IMPLICIT);
+                }
             }
         });
-        //fetch();
+
+        searchEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                // Do nothing
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                Log.d("DBG", "onTextChanged: " + s.toString());
+                fetch(s.toString());
+                // Implement your filtering logic here
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                // Do nothing
+            }
+        });
+
+
+
+
+
+
 
     }
 
-    public void fetch() {
+    public void fetch(String search) {
+        SharedPreferences preferences = getSharedPreferences("com.example.izyinsta.PREFERENCE_FILE_KEY", Context.MODE_PRIVATE);
+        String savedUsername = preferences.getString("username", "");
+        if (savedUsername.equals("")) {
+            Intent intent = new Intent(this, Home.class);
+            startActivity(intent);
+        }
         RecyclerView recyclerView = findViewById(R.id.searchImgScroller);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         OkHttpClient client = new OkHttpClient.Builder()
@@ -72,10 +105,13 @@ public class Search extends AppCompatActivity {
                 .build();
         //On fait une requête, on a besoin que du nom d'utilisateur pour le serveur
         RequestBody body = new FormBody.Builder()
+                .add("username", savedUsername)
+                .add("search", search)
                 .build();
 
         Request request = new Request.Builder()
-                .url(servUrl + "tendency.php")
+                .url(servUrl + "search.php")
+
                 .post(body)
                 .build();
 

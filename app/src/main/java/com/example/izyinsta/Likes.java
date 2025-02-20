@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -31,12 +32,17 @@ import okhttp3.RequestBody;
 
 public class Likes extends AppCompatActivity {
     private String servUrl = "https://android.chocolatine-rt.fr/androidServ/";
+    private SwipeRefreshLayout swipeRefreshLayout;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_likes);
         fetch();
+
+        swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
+        swipeRefreshLayout.setOnRefreshListener(this::fetch);
     }
 
 
@@ -71,6 +77,8 @@ public class Likes extends AppCompatActivity {
             public void onFailure(@NonNull okhttp3.Call call, @NonNull IOException e) {
                 Log.d("DBG", "onFailure: "+e.getMessage());
                 Toast.makeText(Likes.this, "Erreur de connexion", Toast.LENGTH_SHORT).show();
+                swipeRefreshLayout.setRefreshing(false);
+
             }
 
             @Override
@@ -126,6 +134,7 @@ public class Likes extends AppCompatActivity {
 
                             MediaAdapter mediaAdapter = new MediaAdapter(mediaItems);
                             recyclerView.setAdapter(mediaAdapter);
+                            swipeRefreshLayout.setRefreshing(false);
 
                         } catch (JSONException e) {
                             throw new RuntimeException(e);
