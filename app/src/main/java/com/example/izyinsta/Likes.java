@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 import android.view.View;
 import android.content.Intent;
@@ -41,6 +43,8 @@ public class Likes extends AppCompatActivity {
     public void fetch() {
         RecyclerView recyclerView = findViewById(R.id.likesImgScroller);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        SharedPreferences preferences = getSharedPreferences("com.example.izyinsta.PREFERENCE_FILE_KEY", Context.MODE_PRIVATE);
+        String username = preferences.getString("username", "");
         OkHttpClient client = new OkHttpClient.Builder()
                 .hostnameVerifier(new HostnameVerifier() {
                     @Override
@@ -51,6 +55,7 @@ public class Likes extends AppCompatActivity {
                 .build();
         //On fait une requête, on a besoin que du nom d'utilisateur pour le serveur
         RequestBody body = new FormBody.Builder()
+                .add("username", username)
                 .build();
 
         Request request = new Request.Builder()

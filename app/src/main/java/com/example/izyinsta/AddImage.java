@@ -332,6 +332,7 @@ public class AddImage extends AppCompatActivity {
 
     //---Partie de récupération depuis le serveur :-------------------------------------------------
     private void loadUserImages(String savedUsername) {
+
         OkHttpClient client = new OkHttpClient.Builder()
                 .hostnameVerifier(new HostnameVerifier() {
                     @Override

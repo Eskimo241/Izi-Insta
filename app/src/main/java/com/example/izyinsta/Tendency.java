@@ -1,6 +1,8 @@
 package com.example.izyinsta;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -60,9 +62,11 @@ public class Tendency extends AppCompatActivity {
     }
 
     public void fetch() {
+
         RecyclerView recyclerView = findViewById(R.id.tendencyImgScroller);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        String username = getSharedPreferences("user", MODE_PRIVATE).getString("username", "");
+        SharedPreferences preferences = getSharedPreferences("com.example.izyinsta.PREFERENCE_FILE_KEY", Context.MODE_PRIVATE);
+        String username = preferences.getString("username", "");
         OkHttpClient client = new OkHttpClient.Builder()
                 .hostnameVerifier(new HostnameVerifier() {
                     @Override
