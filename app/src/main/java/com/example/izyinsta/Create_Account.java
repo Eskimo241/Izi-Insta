@@ -17,9 +17,6 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.SSLSession;
-
 import okhttp3.Call;
 import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
@@ -33,7 +30,7 @@ public class Create_Account extends AppCompatActivity {
     private EditText email;
     private TextView statusText;
 
-    public String servUrl = "http://android.chocolatine-rt.fr/androidServ/";
+    private static final String servUrl = Constants.SERV_URL;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,14 +44,8 @@ public class Create_Account extends AppCompatActivity {
     }
 
     public void register (View v) {
-        OkHttpClient client = new OkHttpClient.Builder()
-                .hostnameVerifier(new HostnameVerifier() {
-                    @Override
-                    public boolean verify(String hostname, SSLSession session) {
-                        return hostname.equals("android.chocolatine-rt.fr") || hostname.endsWith(".eu.ngrok.io");
-                    }
-                })
-                .build();
+        OkHttpClient client = Constants.getHttpClient();
+
 
 
         RequestBody body = new FormBody.Builder()

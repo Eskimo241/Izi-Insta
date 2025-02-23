@@ -3,7 +3,6 @@ package com.example.izyinsta;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -38,9 +37,6 @@ import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.SSLSession;
-
 
 public class Profil extends AppCompatActivity {
 
@@ -49,7 +45,7 @@ public class Profil extends AppCompatActivity {
     TextView displayLikes;
     TextView displayJoeStars;
     ActivityResultLauncher<Intent> launchSomeActivity;
-    String servUrl = "https://android.chocolatine-rt.fr/androidServ/";
+    private static final String servUrl = Constants.SERV_URL;
 
 
     @Override
@@ -135,7 +131,8 @@ public class Profil extends AppCompatActivity {
 
 
         //Blabla on fait le client et la requête
-        OkHttpClient client = new OkHttpClient();
+        OkHttpClient client = Constants.getHttpClient();
+
         String encodedImage = encodeImage(bitmap);
 
         RequestBody body = new FormBody.Builder()
@@ -192,14 +189,8 @@ public class Profil extends AppCompatActivity {
     private void loadProfilePicture(String savedUsername) {
         Log.d("TIME", "Start Load");
 
-        OkHttpClient client = new OkHttpClient.Builder()
-                .hostnameVerifier(new HostnameVerifier() {
-                    @Override
-                    public boolean verify(String hostname, SSLSession session) {
-                        return hostname.equals("android.chocolatine-rt.fr") || hostname.endsWith(".eu.ngrok.io");
-                    }
-                })
-                .build();
+        OkHttpClient client = Constants.getHttpClient();
+
         if(savedUsername.equals("")) {
             Log.e("DBG", "uploadImageToServer: No username found in shared preferences");
             return;
@@ -282,14 +273,8 @@ public class Profil extends AppCompatActivity {
             return;
         }
 
-        OkHttpClient client = new OkHttpClient.Builder()
-                .hostnameVerifier(new HostnameVerifier() {
-                    @Override
-                    public boolean verify(String hostname, SSLSession session) {
-                        return hostname.equals("android.chocolatine-rt.fr") || hostname.endsWith(".eu.ngrok.io");
-                    }
-                })
-                .build();
+        OkHttpClient client = Constants.getHttpClient();
+
 
         RequestBody body = new FormBody.Builder()
                 .add("username", username)

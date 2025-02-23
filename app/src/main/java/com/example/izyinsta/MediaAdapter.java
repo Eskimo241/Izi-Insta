@@ -23,21 +23,18 @@ import org.json.JSONObject;
 
 import java.util.List;
 
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.SSLSession;
-
 import okhttp3.Call;
 import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import okhttp3.Callback;
+
 import java.io.IOException;
 
 public class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.ViewHolder> {
     private List<MediaItem> mediaItems;
-    String servUrl = "https://android.chocolatine-rt.fr/androidServ/";
+    private static final String servUrl = Constants.SERV_URL;
 
     //Constructeur
     public MediaAdapter(List<MediaItem> mediaItems) {
@@ -102,14 +99,8 @@ public class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.ViewHolder> 
             public void onClick(View v) {
 
                 Log.d("DBG", "MediaId : "+mediaItem.getImageId());
-                OkHttpClient client = new OkHttpClient.Builder()
-                        .hostnameVerifier(new HostnameVerifier() {
-                            @Override
-                            public boolean verify(String hostname, SSLSession session) {
-                                return hostname.equals("android.chocolatine-rt.fr") || hostname.endsWith(".eu.ngrok.io");
-                            }
-                        })
-                        .build();
+                OkHttpClient client = Constants.getHttpClient();
+
 
                 SharedPreferences preferences = holder.likeIcon.getContext().getSharedPreferences("com.example.izyinsta.PREFERENCE_FILE_KEY", Context.MODE_PRIVATE);
                 String savedUsername = preferences.getString("username", "");

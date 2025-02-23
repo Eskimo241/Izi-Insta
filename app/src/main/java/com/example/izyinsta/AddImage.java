@@ -49,9 +49,6 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.SSLSession;
-
 public class AddImage extends AppCompatActivity {
 
     private ActivityResultLauncher<Intent> launchSomeActivity;
@@ -62,7 +59,7 @@ public class AddImage extends AppCompatActivity {
     private String currentImageName; // Variable pour stocker le nom de l'image
     private static final int REQUEST_READ_EXTERNAL_STORAGE = 1; // Définir une constante pour le code de requête (vérification des permissions)
 
-    String servUrl = "https://android.chocolatine-rt.fr/androidServ/";
+    private static final String servUrl = Constants.SERV_URL;
 
 
     @Override
@@ -157,7 +154,7 @@ public class AddImage extends AppCompatActivity {
 
         // Demande de permission READ_EXTERNAL_STORAGE
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_MEDIA_IMAGES}, REQUEST_READ_EXTERNAL_STORAGE);
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_READ_EXTERNAL_STORAGE);
         }
 
         addImage = findViewById(R.id.buttonAddImage);
@@ -227,14 +224,8 @@ public class AddImage extends AppCompatActivity {
             return;
         }
 
-        OkHttpClient client = new OkHttpClient.Builder()
-                .hostnameVerifier(new HostnameVerifier() {
-                    @Override
-                    public boolean verify(String hostname, SSLSession session) {
-                        return hostname.equals("android.chocolatine-rt.fr") || hostname.endsWith(".eu.ngrok.io");
-                    }
-                })
-                .build();
+        OkHttpClient client = Constants.getHttpClient();
+
 
         try {
             String encodedImage = encodeImage(mediaItem.getUri(), mediaItem.getType());
@@ -333,14 +324,8 @@ public class AddImage extends AppCompatActivity {
     //---Partie de récupération depuis le serveur :-------------------------------------------------
     private void loadUserImages(String savedUsername) {
 
-        OkHttpClient client = new OkHttpClient.Builder()
-                .hostnameVerifier(new HostnameVerifier() {
-                    @Override
-                    public boolean verify(String hostname, SSLSession session) {
-                        return hostname.equals("android.chocolatine-rt.fr") || hostname.endsWith(".eu.ngrok.io");
-                    }
-                })
-                .build();
+        OkHttpClient client = Constants.getHttpClient();
+
 
         if (savedUsername.equals("")) {
             Log.e("DBG", "loadUserImages: No username found in shared preferences");
@@ -399,8 +384,8 @@ public class AddImage extends AppCompatActivity {
                                 MediaItem mediaItem = new MediaItem(
                                         mediaId,
                                         imageName,
-                                        "https://android.chocolatine-rt.fr/androidServ/addImg/"+normalUrl,
-                                        "https://android.chocolatine-rt.fr/androidServ/addImg/"+tinyUrl,
+                                        servUrl+"addImg/"+normalUrl,
+                                        servUrl+"addImg/"+tinyUrl,
                                         likes,
                                         null, // likeThisDay (à adapter si nécessaire)
                                         null, // isTrending (à adapter si nécessaire)

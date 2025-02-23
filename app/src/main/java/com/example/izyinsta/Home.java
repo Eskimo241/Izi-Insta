@@ -25,9 +25,6 @@ import org.json.JSONException;
 import android.content.Context;
 import android.widget.Toast;
 
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.SSLSession;
-
 
 public class Home extends AppCompatActivity {
 
@@ -35,8 +32,7 @@ public class Home extends AppCompatActivity {
     private EditText password;
     private TextView dbgText;
 
-    public String servUrl = "https://android.chocolatine-rt.fr/androidServ/";
-    //public String servUrl = "http://10.192.16.90/androidServ/";
+    private static final String servUrl = Constants.SERV_URL;
 
 
 
@@ -84,14 +80,8 @@ public class Home extends AppCompatActivity {
     }
 
     public void register (View v) {
-        OkHttpClient client = new OkHttpClient.Builder()
-                .hostnameVerifier(new HostnameVerifier() {
-                    @Override
-                    public boolean verify(String hostname, SSLSession session) {
-                        return hostname.equals("android.chocolatine-rt.fr") || hostname.endsWith(".eu.ngrok.io");
-                    }
-                })
-                .build();
+        OkHttpClient client = Constants.getHttpClient();
+
 
 
         RequestBody body = new FormBody.Builder()

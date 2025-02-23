@@ -30,9 +30,7 @@
         <activity
             android:name=".Profil"
             android:exported="false" />
-        <activity
-            android:name=".devSend"
-            android:exported="false" />
+
         <activity
             android:name=".Tendency"
             android:exported="false" />
@@ -48,9 +46,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".MainActivity"
-            android:exported="true" />
+
 
         <meta-data
             android:name="preloaded_fonts"
