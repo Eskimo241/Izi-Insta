@@ -10,6 +10,7 @@
         android:id="@+id/bgGradientImage"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:contentDescription="@string/empty_placeholder"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -23,6 +24,7 @@
         android:layout_width="219dp"
         android:layout_height="236dp"
         android:rotation="5"
+        android:contentDescription="@string/CD_menacing"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/titleTendency"
         app:srcCompat="@drawable/menacing_3" />
@@ -32,6 +34,7 @@
         android:layout_width="127dp"
         android:layout_height="444dp"
         android:rotation="-5"
+        android:contentDescription="@string/CD_menacing"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@drawable/menacing2" />
@@ -43,9 +46,9 @@
         android:background="#FFBD59"
         android:fontFamily="@font/poppins_medium"
         android:gravity="center"
-        android:text="TENDENCY"
+        android:text="@string/tendency"
         android:textColor="#FFFFFF"
-        android:textSize="40dp"
+        android:textSize="40sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.501"
         app:layout_constraintStart_toStartOf="parent"
@@ -55,6 +58,7 @@
         android:id="@+id/tendencyIcon"
         android:layout_width="72dp"
         android:layout_height="73dp"
+        android:contentDescription="@string/CD_home_icon"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@drawable/icons8_home_96" />
@@ -64,6 +68,7 @@
         android:layout_width="67dp"
         android:layout_height="72dp"
         android:onClick="toSearchPage"
+        android:contentDescription="@string/CD_search_icon"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/profilIcon"
         app:layout_constraintHorizontal_bias="0.036"
@@ -74,6 +79,7 @@
         android:id="@+id/addImageIcon"
         android:layout_width="68dp"
         android:layout_height="75dp"
+        android:contentDescription="@string/CD_addimg_menu"
         android:onClick="toAddImagePage"
         app:layout_constraintBottom_toBottomOf="@+id/bgGradientImage"
         app:layout_constraintEnd_toStartOf="@+id/likesIcon"
@@ -86,6 +92,7 @@
         android:layout_width="76dp"
         android:layout_height="75dp"
         android:onClick="toLikesPage"
+        android:contentDescription="@string/CD_like_page"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/profilIcon"
         app:layout_constraintHorizontal_bias="0.95"
@@ -97,6 +104,7 @@
         android:layout_width="70dp"
         android:layout_height="76dp"
         android:onClick="toProfilPage"
+        android:contentDescription="@string/CD_profil_icon"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@drawable/icons8_account_96_default" />
@@ -104,22 +112,22 @@
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefreshLayout"
         android:layout_width="416dp"
-        android:layout_height="602dp"
+        android:layout_height="590dp"
         app:layout_constraintBottom_toBottomOf="@+id/addImageIcon"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" >
+        app:layout_constraintTop_toTopOf="parent">
 
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/tendencyImgScroller"
-        android:layout_width="416dp"
-        android:layout_height="602dp"
-        app:layout_constraintBottom_toTopOf="@+id/addImageIcon"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/tendencyImgScroller"
+            android:layout_width="416dp"
+            android:layout_height="590dp"
+            app:layout_constraintBottom_toTopOf="@+id/addImageIcon"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="1.0" />
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

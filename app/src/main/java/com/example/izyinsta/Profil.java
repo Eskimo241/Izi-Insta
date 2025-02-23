@@ -31,6 +31,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 import android.util.Base64;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -290,7 +291,7 @@ public class Profil extends AppCompatActivity {
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 Log.d("DBG", "onFailure (total likes): " + e.getMessage());
                 // Gérer l'erreur, par exemple afficher un message à l'utilisateur
-                runOnUiThread(() -> displayLikes.setText("Erreur de chargement"));
+                runOnUiThread(() -> Toast.makeText(Profil.this, R.string.connection_error, Toast.LENGTH_SHORT).show());
             }
 
             @Override
@@ -312,11 +313,11 @@ public class Profil extends AppCompatActivity {
 
                     } catch (JSONException e) {
                         e.printStackTrace();
-                        runOnUiThread(() -> displayLikes.setText("Erreur de données"));
+                        runOnUiThread(() -> Toast.makeText(Profil.this, R.string.data_error, Toast.LENGTH_SHORT).show());
                     }
                 } else {
                     Log.d("DBG", "onResponse (total likes): " + response.toString());
-                    runOnUiThread(() -> displayLikes.setText("Erreur serveur"));
+                    runOnUiThread(() -> Toast.makeText(Profil.this, R.string.connection_error, Toast.LENGTH_SHORT).show());
                 }
             }
         });

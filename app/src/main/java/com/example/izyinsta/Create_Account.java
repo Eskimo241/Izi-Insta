@@ -93,19 +93,19 @@ public class Create_Account extends AppCompatActivity {
                                 Log.d("DBG", "onResponse: "+myResponse);
                                 switch (obj.getString("success")) {
                                     case "2":
-                                        statusText.setText("Email invalide");
+                                        statusText.setText(R.string.invalid_email);
                                         break;
                                     case "3":
-                                        statusText.setText("Email déjà utilisé");
+                                        statusText.setText(R.string.email_already_used);
                                         break;
                                     case "4":
-                                        statusText.setText("Nom d'utilisateur invalide.");
+                                        statusText.setText(R.string.invalid_username);
                                         break;
                                     case "5":
-                                        statusText.setText("Nom d'utilisateur déjà utilisé");
+                                        statusText.setText(R.string.username_already_used);
                                         break;
                                     default:
-                                        statusText.setText("Unknown error");
+                                        statusText.setText(R.string.unknown_error);
                                 }
 
                         }
