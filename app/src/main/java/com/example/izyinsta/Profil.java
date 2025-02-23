@@ -48,11 +48,16 @@ public class Profil extends AppCompatActivity {
     ActivityResultLauncher<Intent> launchSomeActivity;
     private static final String servUrl = Constants.SERV_URL;
 
+    public String savedUsername;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profil);
+
+        Intent intent = getIntent();
+        String username = intent.getStringExtra("username");
 
 
         Button buttonDisconnect = findViewById(R.id.buttonLogOff);
@@ -65,20 +70,35 @@ public class Profil extends AppCompatActivity {
         displayName = findViewById(R.id.displayName);
         SharedPreferences preferences = getSharedPreferences("com.example.izyinsta.PREFERENCE_FILE_KEY", Context.MODE_PRIVATE);
 
-        String savedUsername = preferences.getString("username", "");
+        savedUsername = preferences.getString("username", "");
+        Constants.verifySavedUsername(savedUsername, this);
 
-        if(savedUsername.equals("")) {
-            Log.e("DBG", "uploadImageToServer: No username found in shared preferences");
-            Intent intent = new Intent(this, Home.class);
-            intent.putExtra("error_message", "Une erreur s'est produite, veuillez vous reconnecter");
+        if (username != null) {
+            // Profile of another user
+            displayName.setText(username);
+            buttonDisconnect.setVisibility(View.GONE);
+            getAndDisplayTotalLikes(username);
+            loadProfilePicture(username);
 
-            startActivity(intent);
-            return;
         }
-        displayName.setText(savedUsername);
+        else {
+            // Our own profile
+            displayName.setText(savedUsername);
+            getAndDisplayTotalLikes(savedUsername);
+            profilPicture.setOnClickListener(v -> imageChooser());
+            if(preferences.getString("pfp", "").equals("")) {
+                loadProfilePicture(savedUsername);
+            }
+            else {
+                String image = preferences.getString("pfp", "");
+                byte[] decodedString = Base64.decode(image, Base64.DEFAULT);
+                Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                profilPicture.setImageBitmap(decodedByte);
+            }
+        }
 
         // Requête pour récupérer le nombre total de likes (Dès le début de l'activité)
-        getAndDisplayTotalLikes();
+
 
 
         launchSomeActivity = registerForActivityResult(
@@ -101,20 +121,12 @@ public class Profil extends AppCompatActivity {
                     }
                 });
 
-        if(preferences.getString("pfp", "").equals("")) {
-            loadProfilePicture(savedUsername);
-        }
-        else {
-            String image = preferences.getString("pfp", "");
-            byte[] decodedString = Base64.decode(image, Base64.DEFAULT);
-            Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-            profilPicture.setImageBitmap(decodedByte);
-        }
+
 
         //loadProfilePicture(savedUsername);
 
 
-        profilPicture.setOnClickListener(v -> imageChooser());
+
 
     }
 
@@ -187,18 +199,18 @@ public class Profil extends AppCompatActivity {
 
 
     //Partie sur la récupération de l'image du Serveur jusqu'à l'appli :
-    private void loadProfilePicture(String savedUsername) {
+    private void loadProfilePicture(String username) {
         Log.d("TIME", "Start Load");
 
         OkHttpClient client = Constants.getHttpClient();
 
-        if(savedUsername.equals("")) {
+        if(username.equals("")) {
             Log.e("DBG", "uploadImageToServer: No username found in shared preferences");
             return;
         }
         //On fait une requête, on a besoin que du nom d'utilisateur pour le serveur
         RequestBody body = new FormBody.Builder()
-                .add("username", savedUsername)
+                .add("username", username)
                 .build();
 
         Request request = new Request.Builder()
@@ -234,12 +246,15 @@ public class Profil extends AppCompatActivity {
                             if (image.equals("default")) {
                                 return;
                             }
-                            SharedPreferences preferences = getSharedPreferences("com.example.izyinsta.PREFERENCE_FILE_KEY", Context.MODE_PRIVATE);
+                            if(username.equals(savedUsername)) {
+                                SharedPreferences preferences = getSharedPreferences("com.example.izyinsta.PREFERENCE_FILE_KEY", Context.MODE_PRIVATE);
 
-                            SharedPreferences.Editor editor = preferences.edit();
-                            editor.putString("pfp", image);
 
-                            editor.apply();
+                                SharedPreferences.Editor editor = preferences.edit();
+                                editor.putString("pfp", image);
+
+                                editor.apply();
+                            }
 
 
                             byte[] decodedString = Base64.decode(image, Base64.DEFAULT);//Gépéto, on décode l'image
@@ -265,14 +280,7 @@ public class Profil extends AppCompatActivity {
 
     }
     //---JoeStars-----------------------------------------------------------------------------------
-    private void getAndDisplayTotalLikes() {
-        SharedPreferences preferences = getSharedPreferences("com.example.izyinsta.PREFERENCE_FILE_KEY", Context.MODE_PRIVATE);
-        String username = preferences.getString("username", "");
-
-        if (username.isEmpty()) {
-            Log.e("DBG", "No username found in shared preferences");
-            return;
-        }
+    private void getAndDisplayTotalLikes(String username) {
 
         OkHttpClient client = Constants.getHttpClient();
 
@@ -377,5 +385,14 @@ public class Profil extends AppCompatActivity {
     public void toLikesPage(View v) {
         Intent intent = new Intent(this, Likes.class);
         startActivity(intent);
+    }
+    public void toProfilPage(View v) {
+        Intent userIntent = getIntent();
+        String username = userIntent.getStringExtra("username");
+        if (username != null) {
+            Intent intent = new Intent(this, Profil.class);
+            startActivity(intent);
+        }
+
     }
 }

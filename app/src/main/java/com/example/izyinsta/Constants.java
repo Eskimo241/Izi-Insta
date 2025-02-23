@@ -1,5 +1,9 @@
 package com.example.izyinsta;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.util.Log;
+
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLSession;
 
@@ -8,7 +12,6 @@ import okhttp3.OkHttpClient;
 public class Constants {
     public static final String SERV_HOST = "android.chocolatine-rt.fr";
     public static final String SERV_URL = "https://"+SERV_HOST +"/androidServ/";
-    //public static final String servUrl = "https://android.chocolatine-rt.fr/androidServ/";
 
     public static final String PREFERENCE_FILE_KEY = "com.example.izyinsta.PREFERENCE_FILE_KEY";
 
@@ -21,5 +24,16 @@ public class Constants {
                     .build();
         }
         return client;
+    }
+
+    public static void verifySavedUsername(String savedUsername, Activity activity) {
+        if(savedUsername.equals("")) {
+            Log.e("DBG", "uploadImageToServer: No username found in shared preferences");
+            Intent intent = new Intent(activity, Home.class);
+            intent.putExtra("error_message", "Une erreur s'est produite, veuillez vous reconnecter");
+
+            activity.startActivity(intent);
+            return;
+        }
     }
 }

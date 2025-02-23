@@ -4,7 +4,8 @@
     <string name="add_image">Ajouter une image</string>
     <string name="add">Ajouter</string>
     <string name="placeholder_like">[likes]</string>
-    <string name="placeholder_image_desc">[imageName] - publié par [userCreator] - [hashtag]</string>
+    <string name="placeholder_image_desc">[imageName] - publié par</string>
+    <string name="placeholder_image_desc2">[userCreator]</string>
     <string name="create_new_account">Créer un nouveau compte</string>
     <string name="name">Nom</string>
     <string name="password">Mot de passe</string>

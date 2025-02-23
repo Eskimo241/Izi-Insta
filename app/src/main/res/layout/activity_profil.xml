@@ -90,6 +90,7 @@
         android:id="@+id/profilIcon"
         android:layout_width="70dp"
         android:layout_height="76dp"
+        android:onClick="toProfilPage"
         android:contentDescription="@string/CD_profil_icon"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

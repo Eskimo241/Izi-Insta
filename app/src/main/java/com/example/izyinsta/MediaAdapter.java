@@ -52,6 +52,7 @@ public class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.ViewHolder> 
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView displayText;
+        TextView displayText2;
         ImageView imageView;
         ImageView likeIcon;
         TextView nbOfLikes;
@@ -60,6 +61,7 @@ public class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.ViewHolder> 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             displayText = itemView.findViewById(R.id.descImageView);
+            displayText2 = itemView.findViewById(R.id.descImageView2);
             imageView = itemView.findViewById(R.id.imageView);
             likeIcon = itemView.findViewById(R.id.likeImageView);
             nbOfLikes = itemView.findViewById(R.id.nbLikesImageView);
@@ -89,8 +91,10 @@ public class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.ViewHolder> 
         }
 
         // Afficher le nom de l'image et l'utilisateur
-        String description = mediaItem.imageName + " - publié par " + mediaItem.userCreator;
+        String description = mediaItem.imageName + " - publié par ";
+        String description2 = "" + mediaItem.userCreator;
         holder.displayText.setText(description);
+        holder.displayText2.setText(description2);
 
         updateLikeIcon(holder.likeIcon, mediaItem.getHasLiked()>0); // Initialisation de l'icône
 
@@ -171,6 +175,12 @@ public class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.ViewHolder> 
 
 
 
+        });
+
+        holder.displayText2.setOnClickListener(v -> {
+            Intent intent = new Intent(holder.displayText2.getContext(), Profil.class);
+            intent.putExtra("username", mediaItem.userCreator);
+            holder.displayText2.getContext().startActivity(intent);
         });
         String likes = mediaItem.likes.toString();
         holder.nbOfLikes.setText(likes);
