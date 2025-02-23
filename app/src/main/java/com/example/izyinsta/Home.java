@@ -96,9 +96,7 @@ public class Home extends AppCompatActivity {
         client.newCall(request).enqueue(new okhttp3.Callback() {
             @Override
             public void onFailure(@NonNull okhttp3.Call call, @NonNull IOException e) {
-                Home.this.runOnUiThread(() -> {
-                    Toast.makeText(getApplicationContext(), "Connection au serveur impossible", Toast.LENGTH_SHORT).show();
-                });
+                Home.this.runOnUiThread(() -> Toast.makeText(getApplicationContext(), "Connection au serveur impossible", Toast.LENGTH_SHORT).show());
             }
 
             @SuppressLint("SetTextI18n")

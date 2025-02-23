@@ -27,7 +27,7 @@ public class MediaItem {
     private String hashtag; // Mots-clé associés
     private String date; //Date de publication
     private String type; // Type de média (image ou gif)
-    private Integer hasLiked; // Si l'utilisateur a déjà liké l'image
+    private final Integer hasLiked; // Si l'utilisateur a déjà liké l'image
     private Uri uri;
 
     //---Constructeur, getters et setters-----------------------------------------------------

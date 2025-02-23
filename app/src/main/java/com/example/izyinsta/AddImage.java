@@ -52,7 +52,7 @@ import okhttp3.Response;
 public class AddImage extends AppCompatActivity {
 
     private ActivityResultLauncher<Intent> launchSomeActivity;
-    private List<MediaItem> mediaItems = new ArrayList<>();
+    private final List<MediaItem> mediaItems = new ArrayList<>();
     private MediaAdapter mediaAdapter;
     private RecyclerView addImgScroller;
     private Button addImage;
@@ -143,9 +143,7 @@ public class AddImage extends AppCompatActivity {
                             });
 
                             // 4) Boutons d'annulation
-                            builder.setNegativeButton("Annuler", (dialog, which) -> {
-                                dialog.cancel();
-                            });
+                            builder.setNegativeButton("Annuler", (dialog, which) -> dialog.cancel());
 
                             builder.show();
                         }
@@ -258,13 +256,10 @@ public class AddImage extends AppCompatActivity {
                     if (response.isSuccessful()) {
 
                         // L'upload a réussi, mais on ne fait rien avec la réponse ici
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Log.d("DBG", "onResponse: "+response);
-                                callback.onSuccess(); // Appeler le callback pour indiquer le succès
+                        runOnUiThread(() -> {
+                            Log.d("DBG", "onResponse: "+response);
+                            callback.onSuccess(); // Appeler le callback pour indiquer le succès
 
-                            }
                         });
                     } else {
                         // ... (Gestion des erreurs de réponse du serveur - reste inchangée)
@@ -407,7 +402,7 @@ public class AddImage extends AppCompatActivity {
                         }
                     });
                 } else {
-                    Log.d("loadUserImages", "onResponse: " + response.toString());
+                    Log.d("loadUserImages", "onResponse: " + response);
                 }
             }
         });

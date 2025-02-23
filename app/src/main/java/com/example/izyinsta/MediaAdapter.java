@@ -33,7 +33,7 @@ import okhttp3.Response;
 import java.io.IOException;
 
 public class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.ViewHolder> {
-    private List<MediaItem> mediaItems;
+    private final List<MediaItem> mediaItems;
     private static final String servUrl = Constants.SERV_URL;
 
     //Constructeur
@@ -50,7 +50,7 @@ public class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.ViewHolder> 
 
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView displayText;
         ImageView imageView;
         ImageView likeIcon;
@@ -94,89 +94,82 @@ public class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.ViewHolder> 
 
         updateLikeIcon(holder.likeIcon, mediaItem.getHasLiked()>0); // Initialisation de l'icône
 
-        holder.likeIcon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        holder.likeIcon.setOnClickListener(v -> {
 
-                Log.d("DBG", "MediaId : "+mediaItem.getImageId());
-                OkHttpClient client = Constants.getHttpClient();
+            Log.d("DBG", "MediaId : "+mediaItem.getImageId());
+            OkHttpClient client = Constants.getHttpClient();
 
 
-                SharedPreferences preferences = holder.likeIcon.getContext().getSharedPreferences("com.example.izyinsta.PREFERENCE_FILE_KEY", Context.MODE_PRIVATE);
-                String savedUsername = preferences.getString("username", "");
-                if (savedUsername.equals("")) {
-                    Log.d("DBG", "No username saved");
-                    Intent intent = new Intent(holder.likeIcon.getContext(), Home.class);
-                    intent.putExtra("error_message", "Une erreur s'est produite, veuillez vous reconnecter");
+            SharedPreferences preferences = holder.likeIcon.getContext().getSharedPreferences("com.example.izyinsta.PREFERENCE_FILE_KEY", Context.MODE_PRIVATE);
+            String savedUsername = preferences.getString("username", "");
+            if (savedUsername.equals("")) {
+                Log.d("DBG", "No username saved");
+                Intent intent = new Intent(holder.likeIcon.getContext(), Home.class);
+                intent.putExtra("error_message", "Une erreur s'est produite, veuillez vous reconnecter");
 
-                    holder.likeIcon.getContext().startActivity(intent);
-                    return;
-                }
-
-                Log.d("DBG", "savedUsername: "+savedUsername);
-
-
-                RequestBody body = new FormBody.Builder()
-                        .add("username", savedUsername)
-                        .add("mediaId", mediaItem.getImageId().toString())
-                        .build();
-
-                Request request = new Request.Builder()
-                        .url(servUrl + "like.php")
-                        .post(body)
-                        .build();
-
-                client.newCall(request).enqueue(new okhttp3.Callback() {
-                    @Override
-                    public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                        Log.d("DBG", "onFailure: "+e.getMessage());
-                    }
-                    @Override
-                    public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                        Log.d("DBG", "onResponse: "+response);
-                        if (response.isSuccessful()) {
-
-                            assert response.body() != null;
-                            String myResponse = response.body().string();
-                            Log.d("DBG", "MediaAdapterLikeClicked: "+myResponse);
-
-                            //-----------------On update le nombre de like sur l'image-------------------------------
-
-                            if(holder.likeIcon.getContext() instanceof Activity) {
-                                Activity activity = (Activity) holder.likeIcon.getContext();
-                                //Comme on est une "sous activité", mais qu'on veut faire des trucs de MainThread on utiliser l'activité du contexte
-                                //c'est pas clair même dans ma tête
-                                activity.runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        try {
-                                            JSONObject obj = new JSONObject(myResponse);
-                                            int likeCount = obj.getInt("likeCount"); // Récupérer le nombre de likes
-                                            boolean hasLiked = obj.getBoolean("hasLiked"); // Récupérer si l'utilisateur a liké (pour l'icône)
-                                            mediaItem.likes = likeCount; // Mettre à jour le nombre de likes dans MediaItem
-                                            holder.nbOfLikes.setText(String.valueOf(likeCount)); // Mettre à jour le TextView
-                                            updateLikeIcon(holder.likeIcon, hasLiked); // Mettre à jour l'icône
-                                            updateLikeColor(holder.nbOfLikes, hasLiked); // Mettre à jour le texte
-                                        } catch (JSONException e) {
-                                            throw new RuntimeException(e);
-                                        }
-                                    }
-                                });
-                            }
-
-
-
-
-
-
-
-                        }
-                    }
-                });
-
-
-
+                holder.likeIcon.getContext().startActivity(intent);
+                return;
             }
+
+            Log.d("DBG", "savedUsername: "+savedUsername);
+
+
+            RequestBody body = new FormBody.Builder()
+                    .add("username", savedUsername)
+                    .add("mediaId", mediaItem.getImageId().toString())
+                    .build();
+
+            Request request = new Request.Builder()
+                    .url(servUrl + "like.php")
+                    .post(body)
+                    .build();
+
+            client.newCall(request).enqueue(new okhttp3.Callback() {
+                @Override
+                public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                    Log.d("DBG", "onFailure: "+e.getMessage());
+                }
+                @Override
+                public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                    Log.d("DBG", "onResponse: "+response);
+                    if (response.isSuccessful()) {
+
+                        assert response.body() != null;
+                        String myResponse = response.body().string();
+                        Log.d("DBG", "MediaAdapterLikeClicked: "+myResponse);
+
+                        //-----------------On update le nombre de like sur l'image-------------------------------
+
+                        if(holder.likeIcon.getContext() instanceof Activity) {
+                            Activity activity = (Activity) holder.likeIcon.getContext();
+                            //Comme on est une "sous activité", mais qu'on veut faire des trucs de MainThread on utiliser l'activité du contexte
+                            //c'est pas clair même dans ma tête
+                            activity.runOnUiThread(() -> {
+                                try {
+                                    JSONObject obj = new JSONObject(myResponse);
+                                    int likeCount = obj.getInt("likeCount"); // Récupérer le nombre de likes
+                                    boolean hasLiked = obj.getBoolean("hasLiked"); // Récupérer si l'utilisateur a liké (pour l'icône)
+                                    mediaItem.likes = likeCount; // Mettre à jour le nombre de likes dans MediaItem
+                                    holder.nbOfLikes.setText(String.valueOf(likeCount)); // Mettre à jour le TextView
+                                    updateLikeIcon(holder.likeIcon, hasLiked); // Mettre à jour l'icône
+                                    updateLikeColor(holder.nbOfLikes, hasLiked); // Mettre à jour le texte
+                                } catch (JSONException e) {
+                                    throw new RuntimeException(e);
+                                }
+                            });
+                        }
+
+
+
+
+
+
+
+                    }
+                }
+            });
+
+
 
         });
         String likes = mediaItem.likes.toString();

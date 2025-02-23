@@ -256,7 +256,7 @@ public class Profil extends AppCompatActivity {
                     });
                 }
                 else {
-                    Log.d("fetchPost", "onResponse: "+response.toString());
+                    Log.d("fetchPost", "onResponse: "+ response);
                 }
 
 
@@ -316,7 +316,7 @@ public class Profil extends AppCompatActivity {
                         runOnUiThread(() -> Toast.makeText(Profil.this, R.string.data_error, Toast.LENGTH_SHORT).show());
                     }
                 } else {
-                    Log.d("DBG", "onResponse (total likes): " + response.toString());
+                    Log.d("DBG", "onResponse (total likes): " + response);
                     runOnUiThread(() -> Toast.makeText(Profil.this, R.string.connection_error, Toast.LENGTH_SHORT).show());
                 }
             }

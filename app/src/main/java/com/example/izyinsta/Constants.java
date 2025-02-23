@@ -17,12 +17,7 @@ public class Constants {
     public static OkHttpClient getHttpClient() {
         if (client == null) {
             client = new OkHttpClient.Builder()
-                    .hostnameVerifier(new HostnameVerifier() {
-                        @Override
-                        public boolean verify(String hostname, SSLSession session) {
-                            return hostname.equals(SERV_HOST) || hostname.endsWith(".eu.ngrok.io");
-                        }
-                    })
+                    .hostnameVerifier((hostname, session) -> hostname.equals(SERV_HOST) || hostname.endsWith(".eu.ngrok.io"))
                     .build();
         }
         return client;
