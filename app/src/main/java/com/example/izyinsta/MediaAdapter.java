@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
@@ -182,6 +183,14 @@ public class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.ViewHolder> 
             intent.putExtra("username", mediaItem.userCreator);
             holder.displayText2.getContext().startActivity(intent);
         });
+
+        holder.imageView.setOnClickListener(v -> {
+            Toast.makeText(holder.imageView.getContext(), "WIP", Toast.LENGTH_SHORT).show();
+            //Intent intent = new Intent(holder.imageView.getContext(), MediaDetail.class);
+            //intent.putExtra("mediaItem", mediaItem);
+            //holder.imageView.getContext().startActivity(intent);
+        });
+
         String likes = mediaItem.likes.toString();
         holder.nbOfLikes.setText(likes);
         updateLikeColor(holder.nbOfLikes, mediaItem.getHasLiked() > 0); // Initialisation de la couleur

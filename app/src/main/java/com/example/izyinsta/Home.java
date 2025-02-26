@@ -110,22 +110,32 @@ public class Home extends AppCompatActivity {
                     Home.this.runOnUiThread(() -> {
                         try {
                             JSONObject obj = new JSONObject(myResponse);
-                            if (obj.getString("success").equals("1")) {
 
-                                //If login is successful, we save the username and password in shared preferences
-                                SharedPreferences preferences = getSharedPreferences("com.example.izyinsta.PREFERENCE_FILE_KEY", Context.MODE_PRIVATE);
-                                SharedPreferences.Editor editor = preferences.edit();
-                                editor.putString("username", username.getText().toString());
-                                editor.putString("password", password.getText().toString());
-                                editor.apply();
+                            switch (obj.getString("success")) {
+                                case "0":
+                                    Log.d("DBG", "LoginFailed");
+                                    dbgText.setText("Nom d'utilisateur ou mot de passe incorrect");
+                                    break;
+                                case "1":
+                                    //If login is successful, we save the username and password in shared preferences
+                                    SharedPreferences preferences = getSharedPreferences("com.example.izyinsta.PREFERENCE_FILE_KEY", Context.MODE_PRIVATE);
+                                    SharedPreferences.Editor editor = preferences.edit();
+                                    editor.putString("username", username.getText().toString());
+                                    editor.putString("password", password.getText().toString());
+                                    editor.apply();
 
-                                //Redirect to main activity
-                                Intent intent = new Intent(Home.this, Tendency.class);
-                                startActivity(intent);
-                            }
-                            else {
-                                Log.d("DBG", "LoginFailed");
-                                dbgText.setText("Nom d'utilisateur ou mot de passe incorrect");
+                                    //Redirect to main activity
+                                    Intent intent = new Intent(Home.this, Tendency.class);
+                                    startActivity(intent);
+                                    break;
+                                case "2":
+                                    Log.d("DBG", "Banned");
+                                    dbgText.setText("Vous avez été banni");
+                                    Toast.makeText(getApplicationContext(), "Vous avez été banni", Toast.LENGTH_SHORT).show();
+                                    break;
+                                default:
+                                    Log.d("DBG", "LoginFailed");
+                                    break;
                             }
                         } catch (JSONException e) {
                             throw new RuntimeException(e);
