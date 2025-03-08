@@ -1,11 +1,8 @@
-package com.example.izyinsta;
+package com.polnareff.izyinsta;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.util.Log;
-
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.SSLSession;
 
 import okhttp3.OkHttpClient;
 
@@ -13,7 +10,7 @@ public class Constants {
     public static final String SERV_HOST = "android.chocolatine-rt.fr";
     public static final String SERV_URL = "https://"+SERV_HOST +"/androidServ/";
 
-    public static final String PREFERENCE_FILE_KEY = "com.example.izyinsta.PREFERENCE_FILE_KEY";
+    public static final String PREFERENCE_FILE_KEY = "com.polnareff.izyinsta.PREFERENCE_FILE_KEY";
 
     private static OkHttpClient client;
 

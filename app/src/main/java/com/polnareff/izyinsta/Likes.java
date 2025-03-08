@@ -1,21 +1,17 @@
-package com.example.izyinsta;
+package com.polnareff.izyinsta;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -31,74 +27,36 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 
-public class Search extends AppCompatActivity {
+public class Likes extends AppCompatActivity {
     private static final String servUrl = Constants.SERV_URL;
+    private SwipeRefreshLayout swipeRefreshLayout;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_search);
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
+        setContentView(R.layout.activity_likes);
+        fetch();
 
-        fetch("");
-
-
-        EditText searchEditText = findViewById(R.id.searchEditText);
-        searchEditText.setFocusableInTouchMode(true);
-        searchEditText.setOnFocusChangeListener((v, hasFocus) -> {
-            if (hasFocus) {
-                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.showSoftInput(searchEditText, InputMethodManager.SHOW_IMPLICIT);
-            }
-        });
-
-        searchEditText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                // Do nothing
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                Log.d("DBG", "onTextChanged: " + s.toString());
-                fetch(s.toString());
-                // Implement your filtering logic here
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                // Do nothing
-            }
-        });
-
-
-
-
-
-
-
+        swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
+        swipeRefreshLayout.setOnRefreshListener(this::fetch);
     }
 
-    public void fetch(String search) {
-        SharedPreferences preferences = getSharedPreferences("com.example.izyinsta.PREFERENCE_FILE_KEY", Context.MODE_PRIVATE);
-        String savedUsername = preferences.getString("username", "");
-        if (savedUsername.equals("")) {
-            Intent intent = new Intent(this, Home.class);
-            startActivity(intent);
-        }
-        RecyclerView recyclerView = findViewById(R.id.searchImgScroller);
+
+    public void fetch() {
+        RecyclerView recyclerView = findViewById(R.id.likesImgScroller);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        SharedPreferences preferences = getSharedPreferences("com.example.izyinsta.PREFERENCE_FILE_KEY", Context.MODE_PRIVATE);
+        String username = preferences.getString("username", "");
         OkHttpClient client = Constants.getHttpClient();
 
         //On fait une requête, on a besoin que du nom d'utilisateur pour le serveur
         RequestBody body = new FormBody.Builder()
-                .add("username", savedUsername)
-                .add("search", search)
+                .add("username", username)
                 .build();
 
         Request request = new Request.Builder()
-                .url(servUrl + "search.php")
-
+                .url(servUrl + "likePage.php")
                 .post(body)
                 .build();
 
@@ -109,7 +67,9 @@ public class Search extends AppCompatActivity {
             @Override
             public void onFailure(@NonNull okhttp3.Call call, @NonNull IOException e) {
                 Log.d("DBG", "onFailure: "+e.getMessage());
-                Toast.makeText(Search.this, "Erreur de connexion", Toast.LENGTH_SHORT).show();
+                Toast.makeText(Likes.this, "Erreur de connexion", Toast.LENGTH_SHORT).show();
+                swipeRefreshLayout.setRefreshing(false);
+
             }
 
             @Override
@@ -123,7 +83,7 @@ public class Search extends AppCompatActivity {
                     Log.d("DBG", "onResponse: "+responseStr);
                     //-----------Ici on a les données comme une liste de JSON-------------------:
                     //[{"mediaId":1,"imageName":...},{"mediaId":2,"imageName":...},...]
-                    Search.this.runOnUiThread(() -> {
+                    Likes.this.runOnUiThread(() -> {
                         try {
                             JSONArray mediaItemsJson = new JSONArray(responseStr); // Réponse JSON contenant un tableau d'images
                             List<MediaItem> mediaItems = new ArrayList<>(); // Liste pour stocker les objets MediaItem
@@ -165,6 +125,7 @@ public class Search extends AppCompatActivity {
 
                             MediaAdapter mediaAdapter = new MediaAdapter(mediaItems);
                             recyclerView.setAdapter(mediaAdapter);
+                            swipeRefreshLayout.setRefreshing(false);
 
                         } catch (JSONException e) {
                             throw new RuntimeException(e);
@@ -177,18 +138,17 @@ public class Search extends AppCompatActivity {
         });
     }
 
-
     //Redirection vers les autres pages de l'appli
     public void toTendencyPage(View v) {
         Intent intent = new Intent(this, Tendency.class);
         startActivity(intent);
     }
-    public void toAddImagePage(View v) {
-        Intent intent = new Intent(this, AddImage.class);
+    public void toSearchPage(View v) {
+        Intent intent = new Intent(this, Search.class);
         startActivity(intent);
     }
-    public void toLikesPage(View v) {
-        Intent intent = new Intent(this, Likes.class);
+    public void toAddImagePage(View v) {
+        Intent intent = new Intent(this, AddImage.class);
         startActivity(intent);
     }
     public void toProfilPage(View v) {

@@ -1,18 +1,22 @@
-package com.example.izyinsta;
-
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.widget.Toast;
+package com.polnareff.izyinsta;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
+import android.view.View;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -27,49 +31,74 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 
-public class Tendency extends AppCompatActivity {
-
-    //RecyclerView recyclerView = findViewById(R.id.profilImgScroller);
-    //recyclerView.setLayoutManager(new LinearLayoutManager(this));
+public class Search extends AppCompatActivity {
     private static final String servUrl = Constants.SERV_URL;
-    private SwipeRefreshLayout swipeRefreshLayout;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_tendency);
+        setContentView(R.layout.activity_search);
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 
-        //---Images et Gifs---------------------------------------------------------------------
-
-
-
+        fetch("");
 
 
+        EditText searchEditText = findViewById(R.id.searchEditText);
+        searchEditText.setFocusableInTouchMode(true);
+        searchEditText.setOnFocusChangeListener((v, hasFocus) -> {
+            if (hasFocus) {
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.showSoftInput(searchEditText, InputMethodManager.SHOW_IMPLICIT);
+            }
+        });
+
+        searchEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                // Do nothing
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                Log.d("DBG", "onTextChanged: " + s.toString());
+                fetch(s.toString());
+                // Implement your filtering logic here
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                // Do nothing
+            }
+        });
 
 
-        swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
-        swipeRefreshLayout.setOnRefreshListener(this::fetch);
-        fetch();
+
+
 
 
 
     }
 
-    public void fetch() {
-
-        RecyclerView recyclerView = findViewById(R.id.tendencyImgScroller);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+    public void fetch(String search) {
         SharedPreferences preferences = getSharedPreferences("com.example.izyinsta.PREFERENCE_FILE_KEY", Context.MODE_PRIVATE);
-        String username = preferences.getString("username", "");
+        String savedUsername = preferences.getString("username", "");
+        if (savedUsername.equals("")) {
+            Intent intent = new Intent(this, Home.class);
+            startActivity(intent);
+        }
+        RecyclerView recyclerView = findViewById(R.id.searchImgScroller);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
         OkHttpClient client = Constants.getHttpClient();
+
         //On fait une requête, on a besoin que du nom d'utilisateur pour le serveur
         RequestBody body = new FormBody.Builder()
-                .add("username", username )
+                .add("username", savedUsername)
+                .add("search", search)
                 .build();
 
         Request request = new Request.Builder()
-                .url(servUrl + "tendency.php")
+                .url(servUrl + "search.php")
+
                 .post(body)
                 .build();
 
@@ -80,8 +109,7 @@ public class Tendency extends AppCompatActivity {
             @Override
             public void onFailure(@NonNull okhttp3.Call call, @NonNull IOException e) {
                 Log.d("DBG", "onFailure: "+e.getMessage());
-                Toast.makeText(Tendency.this, "Erreur de connexion", Toast.LENGTH_SHORT).show();
-                swipeRefreshLayout.setRefreshing(false);
+                Toast.makeText(Search.this, "Erreur de connexion", Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -95,7 +123,7 @@ public class Tendency extends AppCompatActivity {
                     Log.d("DBG", "onResponse: "+responseStr);
                     //-----------Ici on a les données comme une liste de JSON-------------------:
                     //[{"mediaId":1,"imageName":...},{"mediaId":2,"imageName":...},...]
-                    Tendency.this.runOnUiThread(() -> {
+                    Search.this.runOnUiThread(() -> {
                         try {
                             JSONArray mediaItemsJson = new JSONArray(responseStr); // Réponse JSON contenant un tableau d'images
                             List<MediaItem> mediaItems = new ArrayList<>(); // Liste pour stocker les objets MediaItem
@@ -137,7 +165,6 @@ public class Tendency extends AppCompatActivity {
 
                             MediaAdapter mediaAdapter = new MediaAdapter(mediaItems);
                             recyclerView.setAdapter(mediaAdapter);
-                            swipeRefreshLayout.setRefreshing(false);
 
                         } catch (JSONException e) {
                             throw new RuntimeException(e);
@@ -150,9 +177,10 @@ public class Tendency extends AppCompatActivity {
         });
     }
 
+
     //Redirection vers les autres pages de l'appli
-    public void toSearchPage(View v) {
-        Intent intent = new Intent(this, Search.class);
+    public void toTendencyPage(View v) {
+        Intent intent = new Intent(this, Tendency.class);
         startActivity(intent);
     }
     public void toAddImagePage(View v) {
@@ -167,4 +195,5 @@ public class Tendency extends AppCompatActivity {
         Intent intent = new Intent(this, Profil.class);
         startActivity(intent);
     }
+
 }

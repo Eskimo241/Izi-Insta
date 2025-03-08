@@ -1,4 +1,4 @@
-package com.example.izyinsta;
+package com.polnareff.izyinsta;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;

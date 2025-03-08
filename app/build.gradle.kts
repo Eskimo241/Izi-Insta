@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.izyinsta"
+    namespace = "com.polnareff.izyinsta"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.izyinsta"
+        applicationId = "com.polnareff.izyinsta"
         minSdk = 24
         targetSdk = 34
         versionCode = 1

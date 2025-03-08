@@ -1,18 +1,18 @@
-package com.example.izyinsta;
+package com.polnareff.izyinsta;
+
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.util.Log;
-import android.view.View;
-import android.content.Intent;
-import android.os.Bundle;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -27,7 +27,10 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 
-public class Likes extends AppCompatActivity {
+public class Tendency extends AppCompatActivity {
+
+    //RecyclerView recyclerView = findViewById(R.id.profilImgScroller);
+    //recyclerView.setLayoutManager(new LinearLayoutManager(this));
     private static final String servUrl = Constants.SERV_URL;
     private SwipeRefreshLayout swipeRefreshLayout;
 
@@ -35,28 +38,38 @@ public class Likes extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_likes);
-        fetch();
+        setContentView(R.layout.activity_tendency);
+
+        //---Images et Gifs---------------------------------------------------------------------
+
+
+
+
+
+
 
         swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
         swipeRefreshLayout.setOnRefreshListener(this::fetch);
+        fetch();
+
+
+
     }
 
-
     public void fetch() {
-        RecyclerView recyclerView = findViewById(R.id.likesImgScroller);
+
+        RecyclerView recyclerView = findViewById(R.id.tendencyImgScroller);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         SharedPreferences preferences = getSharedPreferences("com.example.izyinsta.PREFERENCE_FILE_KEY", Context.MODE_PRIVATE);
         String username = preferences.getString("username", "");
         OkHttpClient client = Constants.getHttpClient();
-
         //On fait une requête, on a besoin que du nom d'utilisateur pour le serveur
         RequestBody body = new FormBody.Builder()
-                .add("username", username)
+                .add("username", username )
                 .build();
 
         Request request = new Request.Builder()
-                .url(servUrl + "likePage.php")
+                .url(servUrl + "tendency.php")
                 .post(body)
                 .build();
 
@@ -67,9 +80,8 @@ public class Likes extends AppCompatActivity {
             @Override
             public void onFailure(@NonNull okhttp3.Call call, @NonNull IOException e) {
                 Log.d("DBG", "onFailure: "+e.getMessage());
-                Toast.makeText(Likes.this, "Erreur de connexion", Toast.LENGTH_SHORT).show();
+                Toast.makeText(Tendency.this, "Erreur de connexion", Toast.LENGTH_SHORT).show();
                 swipeRefreshLayout.setRefreshing(false);
-
             }
 
             @Override
@@ -83,7 +95,7 @@ public class Likes extends AppCompatActivity {
                     Log.d("DBG", "onResponse: "+responseStr);
                     //-----------Ici on a les données comme une liste de JSON-------------------:
                     //[{"mediaId":1,"imageName":...},{"mediaId":2,"imageName":...},...]
-                    Likes.this.runOnUiThread(() -> {
+                    Tendency.this.runOnUiThread(() -> {
                         try {
                             JSONArray mediaItemsJson = new JSONArray(responseStr); // Réponse JSON contenant un tableau d'images
                             List<MediaItem> mediaItems = new ArrayList<>(); // Liste pour stocker les objets MediaItem
@@ -139,10 +151,6 @@ public class Likes extends AppCompatActivity {
     }
 
     //Redirection vers les autres pages de l'appli
-    public void toTendencyPage(View v) {
-        Intent intent = new Intent(this, Tendency.class);
-        startActivity(intent);
-    }
     public void toSearchPage(View v) {
         Intent intent = new Intent(this, Search.class);
         startActivity(intent);
@@ -151,9 +159,12 @@ public class Likes extends AppCompatActivity {
         Intent intent = new Intent(this, AddImage.class);
         startActivity(intent);
     }
+    public void toLikesPage(View v) {
+        Intent intent = new Intent(this, Likes.class);
+        startActivity(intent);
+    }
     public void toProfilPage(View v) {
         Intent intent = new Intent(this, Profil.class);
         startActivity(intent);
     }
-
 }

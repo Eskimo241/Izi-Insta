@@ -1,4 +1,4 @@
-package com.example.izyinsta;
+package com.polnareff.izyinsta;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;

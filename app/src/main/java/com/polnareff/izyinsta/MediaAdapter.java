@@ -1,4 +1,4 @@
-package com.example.izyinsta;
+package com.polnareff.izyinsta;
 
 import android.app.Activity;
 import android.content.Context;
